@@ -1,0 +1,15 @@
+{
+	"folders":
+	[
+		{
+			"path": "/home/kupsu/Documents/prog/computerenhance/01-sim8086"
+		}
+	],
+	"settings":
+	{
+		"SublimeLinter.linters.gcc.I": [
+			"${folder}/src/",
+			"/usr/local/include",
+		]
+	}
+}

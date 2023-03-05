@@ -1,0 +1,6 @@
+# Ignore make generated binary and object files
+bin
+obj
+
+# Ignore sublime text files
+*.sublime-workspace
