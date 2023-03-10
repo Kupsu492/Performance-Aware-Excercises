@@ -4,8 +4,8 @@
 
 /* Register/memory to/from register instruction */
 int movRM_R(int byte, FILE* fp) {
-	char op1[3];
-	char op2[3];
+	const char* op1;
+	const char* op2;
 	int t;
 
 	// int d = byte & 2;
@@ -19,14 +19,8 @@ int movRM_R(int byte, FILE* fp) {
 
 	switch(byte & 0b11000000) {
 		case 0b11000000: // Register to register
-			t = ((byte & 0b00111000) >> 3) + w;
-			op1[0] = field_decode[t][0];
-			op1[1] = field_decode[t][1];
-			op1[2] = '\0';
-			t = (byte & 0b00000111) + w;
-			op2[0] = field_decode[t][0];
-			op2[1] = field_decode[t][1];
-			op2[2] = '\0';
+			op1 = field_decode[((byte & 0b00111000) >> 3) + w];
+			op2 = field_decode[(byte & 0b00000111) + w];
 
 		break;
 		case 0b10000000: // Register to memory
@@ -41,7 +35,7 @@ int movRM_R(int byte, FILE* fp) {
 };
 
 int movIM_REG(int byte, FILE* fp) {
-	char reg[3];
+	const char* reg;
 	int val = 0;
 
 	int w = byte & 0b00001000;
@@ -64,9 +58,7 @@ int movIM_REG(int byte, FILE* fp) {
 		val += (byte << 8);
 	}
 
-	reg[0] = field_decode[r][0];
-	reg[1] = field_decode[r][1];
-	reg[2] = '\0';
+	reg = field_decode[r];
 
 	printf("mov %s, %d\n", reg, val);
 
