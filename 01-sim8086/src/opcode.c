@@ -2,15 +2,12 @@
 #include "opcode.h"
 
 int check_opcode(int opcode, FILE* fp) {
-    int t = opcode;
+    // 8bit opcodes
 
-    // First switch clause for full 8bit opcodes
+    // 7bit opcodes
 
-    // Second switch clause for 7bit opcodes
-
-    // Third switch clause for 6bit opcodes
-    t &= 0b11111100;
-    switch(t) {
+    // 6bit opcodes
+    switch(opcode & 0b11111100) {
         case 0b10001000:
             return movRM_R(opcode, fp);
         break;
