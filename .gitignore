@@ -1,6 +1,8 @@
 # Ignore make generated binary and object files
-bin
-obj
+**/bin/*
+**/obj/*
+!.gitignore
 
 # Ignore sublime text files
 *.sublime-workspace
+sim8086_.sublime-project
