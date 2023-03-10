@@ -39,3 +39,36 @@ int movRM_R(int byte, FILE* fp) {
 
 	return 0;
 };
+
+int movIM_REG(int byte, FILE* fp) {
+	char reg[3];
+	int val = 0;
+
+	int w = byte & 0b00001000;
+	int r = byte & 0b00000111;
+
+	byte = fgetc(fp);
+	if (feof(fp)) {
+		return 2; // Missing opcode's additional data bytes
+	}
+
+	val += byte;
+
+	if (w) {
+		byte = fgetc(fp);
+		if (feof(fp)) {
+			return 2; // Missing opcode's additional data bytes
+		}
+
+		r += 8;
+		val += (byte << 8);
+	}
+
+	reg[0] = field_decode[r][0];
+	reg[1] = field_decode[r][1];
+	reg[2] = '\0';
+
+	printf("mov %s, %d\n", reg, val);
+
+	return 0;
+}

@@ -5,4 +5,6 @@
 
 int movRM_R(int data, FILE* fp);
 
+int movIM_REG(int byte, FILE* fp);
+
 #endif
