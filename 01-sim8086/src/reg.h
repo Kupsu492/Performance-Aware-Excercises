@@ -23,4 +23,17 @@ const char field_decode[16][3] = {
 	"di\0",
 };
 
+/*
+	Table for effective address calculation */
+const char ea_calc[8][8] = {
+	"bx + si\0",
+	"bx + di\0",
+	"bp + si\0",
+	"bp + di\0",
+	"si\0    ",
+	"di\0    ",
+	"bp\0    ",
+	"bx\0    ",
+};
+
 #endif

@@ -6,10 +6,10 @@
 int movRM_R(int byte, FILE* fp) {
 	const char* op1;
 	const char* op2;
-	int t;
 
+	// D field check, if REG field is destination
 	// int d = byte & 2;
-	// If to get 16bit operator names
+	// W field check, if using 16bit data
 	int w = (byte & 1) ? 8 : 0;
 
 	byte = fgetc(fp);
@@ -23,10 +23,14 @@ int movRM_R(int byte, FILE* fp) {
 			op2 = field_decode[(byte & 0b00000111) + w];
 
 		break;
-		case 0b10000000: // Register to memory
-		case 0b01000000: // Memory to register
+		case 0b10000000: // 16-bit displacement
+		case 0b01000000: // 8-bit displacement
+		case 0b00000000: // no displacement
 		default:
-			return 3; // Not done yet
+			if ((byte & 0b00000111) == 7) {
+				// Special case: direct address mode
+				return 4;
+			}
 	}
 
 	printf("mov %s, %s\n", op2, op1);
