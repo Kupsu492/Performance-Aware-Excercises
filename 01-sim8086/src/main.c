@@ -1,5 +1,6 @@
 
 #include "main.h"
+#include "debug.h"
 
 int main(int argc, char const *argv[])
 {
@@ -16,6 +17,11 @@ int main(int argc, char const *argv[])
     if (fp == NULL) {
         printf("File not found");
         return -1;
+    }
+
+    // Debug function
+    if (argc > 2) {
+        return printBinary(fp);
     }
 
     printf("\nbits 16\n\n");
