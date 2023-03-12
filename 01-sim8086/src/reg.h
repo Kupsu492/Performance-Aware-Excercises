@@ -25,15 +25,27 @@ const char field_decode[16][3] = {
 
 /*
 	Table for effective address calculation */
-const char ea_calc[8][8] = {
-	"bx + si\0",
-	"bx + di\0",
-	"bp + si\0",
-	"bp + di\0",
-	"si\0    ",
-	"di\0    ",
-	"bp\0    ",
-	"bx\0    ",
+const char ea_calc[8][10] = {
+	"[bx + si]\0",
+	"[bx + di]\0",
+	"[bp + si]\0",
+	"[bp + di]\0",
+	"[si]\0    ",
+	"[di]\0    ",
+	"[bp]\0    ",
+	"[bx]\0    ",
+};
+/*
+	Table with direct number encoding*/
+const char ea_calc_dir[8][15] = {
+	"[bx + si + %u]\0",
+	"[bx + di + %u]\0",
+	"[bp + si + %u]\0",
+	"[bp + di + %u]\0",
+	"[si + %u]\0    ",
+	"[di + %u]\0    ",
+	"[bp + %u]\0    ",
+	"[bx + %u]\0    ",
 };
 
 #endif
