@@ -31,6 +31,35 @@ int ins6disp(int byte, FILE* fp, char* ins) {
 	return 0;
 };
 
+/*
+	Instruction decoding which starts with 100000
+	and has 3 additional opcode checks in the next byte */
+int ins_disp_data(int byte, FILE* fp) {
+	const char* r_m;
+	const char* reg;
+	char eac_str[24]; // String for displacement storing
+
+	// S field check, if uses signed numbers
+	// int s = byte & 2;
+	// W field check, if using 16bit data
+	int w = ((byte & 3) == 1) ? 8 : 0;
+
+	byte = fgetc(fp);
+	if (feof(fp)) {
+		return 2; // Missing opcode's additional data bytes
+	}
+
+	const char* ins = im_reg_mem_ins[byte & 0b00111000];
+
+	int failure = decode_effective_address(&reg, &r_m, eac_str, byte, fp, w);
+	if (failure)
+		return failure;
+	else
+		printf("%s %s, %s\n", ins, r_m, reg);
+
+	return 0;
+}
+
 int decode_effective_address(const char** reg, const char** r_m, char* eac_str, int byte, FILE* fp, int w) {
 	int dis_16 = 0;
 

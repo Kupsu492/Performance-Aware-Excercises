@@ -48,4 +48,17 @@ const char ea_calc_dir[8][15] = {
 	"[bx + %u]\0    ",
 };
 
+/*
+	Table for getting instruction mnemonic
+	that start with 100000 */
+const char im_reg_mem_ins[7][5] = {
+	"add\0",
+	"\0",
+	"\0",
+	"\0",
+	"sub\0",
+	"\0",
+	"cmp\0",
+};
+
 #endif
