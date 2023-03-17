@@ -8,8 +8,10 @@ int check_opcode(int opcode, FILE* fp) {
 
     // 6bit opcodes
     switch(opcode & 0b11111100) {
+        case 0b00000000:
+            return ins6disp(opcode, fp, "add\0");
         case 0b10001000:
-            return movRM_R(opcode, fp);
+            return ins6disp(opcode, fp, "mov\0");
         break;
     }
 

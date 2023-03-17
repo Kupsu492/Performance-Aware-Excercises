@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-int movRM_R(int data, FILE* fp);
+int ins6disp(int data, FILE* fp, char* ins);
 
 int movIM_REG(int byte, FILE* fp);
 

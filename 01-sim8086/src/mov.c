@@ -2,8 +2,10 @@
 #include "mov.h"
 #include "reg.h"
 
-/* Register/memory to/from register instruction */
-int movRM_R(int byte, FILE* fp) {
+/*
+	Instruction decoding which has opcode in the first 6 bits
+	and only has additional DISP bytes. */
+int ins6disp(int byte, FILE* fp, char* ins) {
 	const char* r_m;
 	const char* reg;
 	char eac_str[24]; // String for displacement storing
@@ -23,7 +25,7 @@ int movRM_R(int byte, FILE* fp) {
 		case 0b11000000: // Register to register
 			reg = field_decode[((byte & 0b00111000) >> 3) + w];
 			r_m = field_decode[(byte & 0b00000111) + w];
-			printf("mov %s, %s\n", r_m, reg);
+			printf("%s %s, %s\n", ins, r_m, reg);
 			return 0;
 
 		break;
@@ -69,9 +71,9 @@ int movRM_R(int byte, FILE* fp) {
 	}
 
 	if (d)
-		printf("mov %s, %s\n", reg, r_m);
+		printf("%s %s, %s\n", ins, reg, r_m);
 	else
-		printf("mov %s, %s\n", r_m, reg);
+		printf("%s %s, %s\n", ins, r_m, reg);
 
 	return 0;
 };
