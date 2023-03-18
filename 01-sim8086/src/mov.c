@@ -20,7 +20,8 @@ int ins6disp(int byte, FILE* fp, char* ins) {
 		return 2; // Missing opcode's additional data bytes
 	}
 
-	int failure = decode_effective_address(&reg, &r_m, eac_str, byte, fp, w);
+	reg = field_decode[((byte & 0b00111000) >> 3) + w];
+	int failure = decode_effective_address(&r_m, eac_str, byte, fp, w);
 	if (failure)
 		return failure;
 	else if (d)
@@ -60,12 +61,13 @@ int ins_disp_data(int byte, FILE* fp) {
 	return 0;
 }
 
-int decode_effective_address(const char** reg, const char** r_m, char* eac_str, int byte, FILE* fp, int w) {
+int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp, int w) {
+	int val;
+	int r_m_field;
 	int dis_16 = 0;
 
 	switch(byte & 0b11000000) {
 		case 0b11000000: // Register to register
-			*reg = field_decode[((byte & 0b00111000) >> 3) + w];
 			*r_m = field_decode[(byte & 0b00000111) + w];
 		break;
 
@@ -73,9 +75,8 @@ int decode_effective_address(const char** reg, const char** r_m, char* eac_str, 
 			dis_16 = 1;
 			__attribute__ ((fallthrough)); // For compiler: switch case fall through is desirable
 		case 0b01000000: // 8-bit displacement
-			*reg = field_decode[((byte & 0b00111000) >> 3) + w];
-			int r_m_field = (byte & 0b00000111);
-			int val = 0;
+			r_m_field = (byte & 0b00000111);
+			val = 0;
 
 			byte = fgetc(fp); // DISP-LO
 			if (feof(fp)) {
@@ -107,7 +108,6 @@ int decode_effective_address(const char** reg, const char** r_m, char* eac_str, 
 			}
 
 			*r_m = ea_calc[(byte & 0b00000111)];
-			*reg = field_decode[((byte & 0b00111000) >> 3) + w];
 	}
 
 	return 0;
