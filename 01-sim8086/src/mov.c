@@ -34,31 +34,68 @@ int ins6disp(int byte, FILE* fp, char* ins) {
 
 /*
 	Instruction decoding which starts with 100000
-	and has 3 additional opcode checks in the next byte */
+	and has 3 additional opcode checks in the next byte.
+	Used for SUB, ADD, CMP */
 int ins_disp_data(int byte, FILE* fp) {
 	const char* r_m;
-	const char* reg;
+	const char* ins;
+	int val;
+	int failure = 0;
 	char eac_str[24]; // String for displacement storing
 
 	// S field check, if uses signed numbers
 	// int s = byte & 2;
-	// W field check, if using 16bit data
-	int w = ((byte & 3) == 1) ? 8 : 0;
+	// W field check, if using 16bit registers
+	int w = (byte & 1) ? 8 : 0;
+	// If data is stored in 16 bits
+	int d16 = (byte & 3) == 1;
 
 	byte = fgetc(fp);
 	if (feof(fp)) {
 		return 2; // Missing opcode's additional data bytes
 	}
 
-	const char* ins = im_reg_mem_ins[byte & 0b00111000];
+	ins = im_reg_mem_ins[byte & 0b00111000];
 
-	int failure = decode_effective_address(&reg, &r_m, eac_str, byte, fp, w);
+	// Check if we have memory displacement or register
+	if ((byte & 0b11000000) == 0b11000000) {
+		failure = decode_effective_address(&r_m, eac_str, byte, fp, w);
+		if (failure)
+			return failure;
+	} else {
+		r_m = field_decode[(byte & 0b00000111) + w];
+	}
+
+	val = get_value(fp, d16, &failure);
 	if (failure)
 		return failure;
-	else
-		printf("%s %s, %s\n", ins, r_m, reg);
+
+	printf("%s %s, %u\n", ins, r_m, val);
 
 	return 0;
+}
+
+int get_value(FILE* fp, int get_word, int *failure) {
+	int val = 0;
+	int byte;
+
+	byte = fgetc(fp); // DISP-LO / Data
+	if (feof(fp)) {
+		*failure = 2;
+		return 0; // Missing opcode's additional data bytes
+	}
+	val += byte;
+
+	if (get_word) {
+		byte = fgetc(fp); // DISP-HI / Data
+		if (feof(fp)) {
+			*failure = 2;
+			return 0; // Missing opcode's additional data bytes
+		}
+		val += (byte << 8);
+	}
+
+	return val;
 }
 
 int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp, int w) {

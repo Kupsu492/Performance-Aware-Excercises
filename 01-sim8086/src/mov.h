@@ -9,4 +9,8 @@ int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp
 
 int movIM_REG(int byte, FILE* fp);
 
+int get_value(FILE* fp, int get_word, int *failure);
+
+int ins_disp_data(int byte, FILE* fp);
+
 #endif
