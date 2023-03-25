@@ -146,10 +146,16 @@ int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp
 		default:
 			if ((byte & 0b00000111) == 6) {
 				// Special case: direct address mode
-				return 4;
-			}
+				int failure = 0;
+				val = get_value(fp, 1, &failure);
+				if (failure)
+					return failure;
 
-			*r_m = ea_calc[(byte & 0b00000111)];
+				sprintf(eac_str, "[%u]", val);
+				*r_m = eac_str;
+			} else {
+				*r_m = ea_calc[(byte & 0b00000111)];
+			}
 	}
 
 	return 0;
