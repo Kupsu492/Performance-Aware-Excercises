@@ -68,4 +68,30 @@ const char operation_size[3][6] = {
 	"word \0",
 };
 
+const char jump_mnemonics[16][5] = {
+	"jo\0",
+	"jno\0",
+	"jb\0",
+	"jnb\0",
+	"je\0",
+	"jne\0",
+	"jbe\0",
+	"jnbe\0",
+	"js\0",
+	"jns\0",
+	"jp\0",
+	"jnp\0",
+	"jl\0",
+	"jnl\0",
+	"jle\0",
+	"jnle\0",
+};
+
+const char loop_mnemonics[4][7] = {
+	"loopnz\0",
+	"loopz\0",
+	"loop\0",
+	"jcxz\0",
+};
+
 #endif

@@ -15,4 +15,6 @@ int ins_disp_data(int byte, FILE* fp);
 
 int decode_immediate_accumulator(int byte, FILE* fp);
 
+int jump_decode(int byte, FILE* fp, int jump_table);
+
 #endif

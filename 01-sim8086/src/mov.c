@@ -186,3 +186,26 @@ int movIM_REG(int byte, FILE* fp) {
 
 	return 0;
 }
+
+int jump_decode(int byte, FILE* fp, int table) {
+	const char* ins;
+	char val;
+
+
+	switch(table) {
+		case 0:
+			ins = jump_mnemonics[byte & 0b00001111];
+			break;
+		case 1:
+			ins = loop_mnemonics[byte & 0b00001111];
+	}
+
+	val = (char) fgetc(fp); // IP-INC8
+	if (feof(fp)) {
+		return 2; // Missing opcode's additional data bytes
+	}
+
+	printf("%s %i\n", ins, val);
+
+	return 0;
+}
