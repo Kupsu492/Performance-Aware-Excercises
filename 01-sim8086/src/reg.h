@@ -61,4 +61,10 @@ const char im_reg_mem_ins[7][5] = {
 	"cmp\0",
 };
 
+const char operation_size[3][6] = {
+	"\0",
+	"byte \0",
+	"word \0",
+};
+
 #endif

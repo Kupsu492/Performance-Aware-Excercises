@@ -40,6 +40,7 @@ int ins_disp_data(int byte, FILE* fp) {
 	const char* r_m;
 	const char* ins;
 	int val;
+	int size = 0;
 	int failure = 0;
 	char eac_str[24]; // String for displacement storing
 
@@ -57,12 +58,16 @@ int ins_disp_data(int byte, FILE* fp) {
 
 	ins = im_reg_mem_ins[byte & 0b00111000];
 
-	// Check if we have memory displacement or register
-	if ((byte & 0b11000000) == 0b11000000) {
+	int eff = byte & 0b11000000;
+	if (eff != 0b11000000) {
+		// Immediate to memory
+		size = (w >> 3) + 1;
+
 		failure = decode_effective_address(&r_m, eac_str, byte, fp, w);
 		if (failure)
 			return failure;
 	} else {
+		// Immediate to register
 		r_m = field_decode[(byte & 0b00000111) + w];
 	}
 
@@ -70,7 +75,7 @@ int ins_disp_data(int byte, FILE* fp) {
 	if (failure)
 		return failure;
 
-	printf("%s %s, %u\n", ins, r_m, val);
+	printf("%s %s%s, %u\n", ins, operation_size[size], r_m, val);
 
 	return 0;
 }
