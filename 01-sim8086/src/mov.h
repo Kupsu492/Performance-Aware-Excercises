@@ -13,4 +13,6 @@ int get_value(FILE* fp, int get_word, int *failure);
 
 int ins_disp_data(int byte, FILE* fp);
 
+int decode_immediate_accumulator(int byte, FILE* fp);
+
 #endif

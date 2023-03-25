@@ -155,6 +155,25 @@ int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp
 	return 0;
 }
 
+int decode_immediate_accumulator(int byte, FILE* fp) {
+	const char* ins;
+	const char* reg;
+	int val;
+	int failure;
+
+	int w = byte & 0b00000001;
+	ins = im_reg_mem_ins[byte & 0b00111000];
+
+	// Register can be either ax or al
+	reg = field_decode[w * 8];
+
+	val = get_value(fp, w, &failure);
+
+	printf("%s %s, %d\n", ins, reg, val);
+
+	return 0;
+}
+
 int movIM_REG(int byte, FILE* fp) {
 	const char* reg;
 	int val = 0;

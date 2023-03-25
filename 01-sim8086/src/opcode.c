@@ -24,5 +24,12 @@ int check_opcode(int opcode, FILE* fp) {
         break;
     }
 
+    // Immediate to accumulator opcodes
+    switch(opcode & 0b11000110) {
+        case 0b00000100:
+            return decode_immediate_accumulator(opcode, fp);
+        break;
+    }
+
     return 1; // Unknown opcode
 }
