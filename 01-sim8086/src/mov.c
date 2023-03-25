@@ -56,7 +56,7 @@ int ins_disp_data(int byte, FILE* fp) {
 		return 2; // Missing opcode's additional data bytes
 	}
 
-	ins = im_reg_mem_ins[byte & 0b00111000];
+	ins = im_reg_mem_ins[(byte & 0b00111000) >> 3];
 
 	int eff = byte & 0b11000000;
 	if (eff != 0b11000000) {
@@ -162,7 +162,7 @@ int decode_immediate_accumulator(int byte, FILE* fp) {
 	int failure;
 
 	int w = byte & 0b00000001;
-	ins = im_reg_mem_ins[byte & 0b00111000];
+	ins = im_reg_mem_ins[(byte & 0b00111000) >> 3];
 
 	// Register can be either ax or al
 	reg = field_decode[w * 8];

@@ -56,8 +56,8 @@ const char im_reg_mem_ins[7][5] = {
 	"\0",
 	"\0",
 	"\0",
-	"sub\0",
 	"\0",
+	"sub\0",
 	"cmp\0",
 };
 
