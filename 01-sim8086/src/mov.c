@@ -107,6 +107,7 @@ int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp
 	int val;
 	int r_m_field;
 	int dis_16 = 0;
+	int failure = 0;
 
 	switch(byte & 0b11000000) {
 		case 0b11000000: // Register to register
@@ -118,21 +119,10 @@ int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp
 			__attribute__ ((fallthrough)); // For compiler: switch case fall through is desirable
 		case 0b01000000: // 8-bit displacement
 			r_m_field = (byte & 0b00000111);
-			val = 0;
 
-			byte = fgetc(fp); // DISP-LO
-			if (feof(fp)) {
-				return 2; // Missing opcode's additional data bytes
-			}
-			val += byte;
-
-			if (dis_16) {
-				byte = fgetc(fp); // DISP-HI
-				if (feof(fp)) {
-					return 2; // Missing opcode's additional data bytes
-				}
-				val += (byte << 8);
-			}
+			val = get_value(fp, dis_16, &failure);
+			if (failure)
+				return failure;
 
 			if (val) {
 				sprintf(eac_str, ea_calc_dir[r_m_field], val);
@@ -146,7 +136,6 @@ int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp
 		default:
 			if ((byte & 0b00000111) == 6) {
 				// Special case: direct address mode
-				int failure = 0;
 				val = get_value(fp, 1, &failure);
 				if (failure)
 					return failure;
@@ -183,28 +172,15 @@ int decode_immediate_accumulator(int byte, FILE* fp) {
 int movIM_REG(int byte, FILE* fp) {
 	const char* reg;
 	int val = 0;
+	int failure = 0;
 
 	int w = byte & 0b00001000;
-	int r = byte & 0b00000111;
 
-	byte = fgetc(fp);
-	if (feof(fp)) {
-		return 2; // Missing opcode's additional data bytes
-	}
+	reg = field_decode[(byte & 0b00000111) + w];
 
-	val += byte;
-
-	if (w) {
-		byte = fgetc(fp);
-		if (feof(fp)) {
-			return 2; // Missing opcode's additional data bytes
-		}
-
-		r += 8;
-		val += (byte << 8);
-	}
-
-	reg = field_decode[r];
+	val = get_value(fp, w, &failure);
+	if (failure)
+		return failure;
 
 	printf("mov %s, %d\n", reg, val);
 
