@@ -1,4 +1,26 @@
 
+#include <stdint.h>
+#include <stdbool.h>
+
+struct instruction
+{
+	// Will contain registers or effective address calculation encodings
+	uint8_t op1_type;
+	uint8_t op1;
+	uint8_t op2_type;
+	uint8_t op2;
+
+	int32_t data; // Immediate value
+	int32_t disp; // EAC constant value
+
+	bool wide;
+	bool sign;
+	bool dir;
+	uint8_t size;
+
+	int32_t error; // If processing failed
+};
+
 /*	Table for register name decoding
 	First 8 are 8bit registers
 	Second 8 are 16bit registers */
