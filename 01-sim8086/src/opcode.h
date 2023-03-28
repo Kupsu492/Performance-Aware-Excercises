@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 
-#include "mov.h"
-
 int check_opcode(int opcode, FILE* fp);
 
 #endif

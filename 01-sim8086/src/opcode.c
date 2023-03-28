@@ -1,5 +1,6 @@
 
 #include "opcode.h"
+#include "mov.h"
 
 int check_opcode(int opcode, FILE* fp) {
     // 8bit opcodes
