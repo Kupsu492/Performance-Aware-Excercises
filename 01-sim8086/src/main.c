@@ -5,12 +5,13 @@
 // #include "main.h"
 #include "opcode.h"
 #include "debug.h"
+#include "reg.h"
 
 int main(int argc, char const *argv[])
 {
     FILE* fp;
     int opcode;
-    int error;
+    instruction result;
 
     if (argc < 2) {
         printf("Missing bytecode file");
@@ -36,9 +37,10 @@ int main(int argc, char const *argv[])
             break;
         }
 
-        error = check_opcode(opcode, fp);
+        result = check_opcode(opcode, fp);
         if (error) {
-            printf("Error with code: %u", error);
+        if (result.error) {
+            printf("Error with code: %u", result.error);
             break;
         }
     }

@@ -2,7 +2,8 @@
 #define _sim8086__opcode 1
 
 #include <stdio.h>
+#include "reg.h"
 
-int check_opcode(int opcode, FILE* fp);
+instruction check_opcode(int opcode, FILE* fp);
 
 #endif
