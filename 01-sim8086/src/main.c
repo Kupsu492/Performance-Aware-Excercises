@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
         }
 
         result = check_opcode(opcode, fp);
-        if (error) {
+        debugPrintInstruction(result);
         if (result.error) {
             printf("Error with code: %u", result.error);
             break;

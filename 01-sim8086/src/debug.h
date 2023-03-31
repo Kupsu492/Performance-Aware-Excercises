@@ -3,7 +3,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "reg.h"
 
 int printBinary(FILE* fp);
+
+void debugPrintInstruction(instruction op);
 
 #endif
