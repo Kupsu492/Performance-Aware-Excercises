@@ -1,35 +1,29 @@
 
+#include <stdint.h>
 #include "mov.h"
 #include "reg.h"
 
 /*
 	Instruction decoding which has opcode in the first 6 bits
 	and only has additional DISP bytes. */
-int ins6disp(int byte, FILE* fp, char* ins) {
-	const char* r_m;
-	const char* reg;
-	char eac_str[24]; // String for displacement storing
+instruction ins6disp(int byte, FILE* fp, char* ins) {
+	instruction op;
 
-	// D field check, if REG field is destination
-	int d = byte & 2;
-	// W field check, if using 16bit data
-	int w = (byte & 1) ? 8 : 0;
+	op.dir = byte & 2;
+	op.wide = (byte & 1) ? REG_8BIT : REG_16BIT;
 
 	byte = fgetc(fp);
 	if (feof(fp)) {
-		return 2; // Missing opcode's additional data bytes
+		op.error = 2;
+		return op; // Missing opcode's additional data bytes
 	}
 
-	reg = field_decode[((byte & 0b00111000) >> 3) + w];
-	int failure = decode_effective_address(&r_m, eac_str, byte, fp, w);
-	if (failure)
-		return failure;
-	else if (d)
-		printf("%s %s, %s\n", ins, reg, r_m);
-	else
-		printf("%s %s, %s\n", ins, r_m, reg);
+	op.op1 = ((byte & 0b00111000) >> 3) + (uint8_t) op.wide;
+	// int failure = decode_effective_address(op, byte, fp);
+	// if (failure)
+	// 	op.error = failure;
 
-	return 0;
+	return op;
 };
 
 /*

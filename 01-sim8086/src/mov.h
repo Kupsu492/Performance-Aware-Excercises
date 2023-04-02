@@ -2,8 +2,10 @@
 #define _sim8086__mov 1
 
 #include <stdio.h>
+#include "reg.h"
 
-int ins6disp(int data, FILE* fp, char* ins);
+
+instruction ins6disp(int data, FILE* fp, char* ins);
 
 int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp, int w);
 

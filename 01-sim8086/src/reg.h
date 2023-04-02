@@ -4,10 +4,35 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+enum wide_codes {
+	REG_8BIT = 0,
+	REG_16BIT = 8,
+};
+
+enum register_codes {
+	REG_AL,
+	REG_CL,
+	REG_DL,
+	REG_BL,
+	REG_AH,
+	REG_CH,
+	REG_DH,
+	REG_BH,
+	REG_AX,
+	REG_CX,
+	REG_DX,
+	REG_BX,
+	REG_SP,
+	REG_BP,
+	REG_SI,
+	REG_DI,
+};
+
 typedef struct instruction
 {
 	uint8_t operation;
 
+	uint8_t op_usage;
 	// Will contain registers or effective address calculation encodings
 	uint8_t op1;
 	uint8_t op2;
@@ -15,7 +40,7 @@ typedef struct instruction
 	int32_t data; // Immediate value
 	int32_t disp; // EAC constant value
 
-	bool wide;
+	enum wide_codes wide;
 	bool sign;
 	bool dir;
 	uint8_t size;

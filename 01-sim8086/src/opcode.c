@@ -15,7 +15,7 @@ instruction check_opcode(int opcode, FILE* fp) {
         case 0b10000000:
             // return ins_disp_data(opcode, fp);
         case 0b10001000:
-            // return ins6disp(opcode, fp, "mov\0");
+            return ins6disp(opcode, fp, "mov\0");
         case 0b00101000:
             // return ins6disp(opcode, fp, "sub\0");
         case 0b00111000:
