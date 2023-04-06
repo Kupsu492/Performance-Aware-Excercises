@@ -12,6 +12,9 @@ int main(int argc, char const *argv[])
 {
     FILE* fp;
     int opcode;
+    int read_failure;
+    stream exec;
+
     instruction result;
 
     if (argc < 2) {
@@ -25,10 +28,19 @@ int main(int argc, char const *argv[])
         return -1;
     }
 
+    read_failure = read_executable(fp, &exec);
+    fclose(fp);
+
+    if (read_failure) {
+        printf("File reading returned failure: %d", read_failure);
+        return -1;
+    }
+
     // Debug function
     if (argc > 2) {
         return printBinary(fp);
     }
+    return read_failure;
 
     printf("\nbits 16\n\n");
 
@@ -46,6 +58,5 @@ int main(int argc, char const *argv[])
         }
     }
 
-    fclose(fp);
     return 0;
 }

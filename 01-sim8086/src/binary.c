@@ -25,7 +25,7 @@
      and automatically appended after the data.
    Initial values of (*dataptr) and (*sizeptr) are ignored.
 */
-int readall(FILE *in, instructions *ins)
+int read_executable(FILE *in, stream *exec)
 {
     uint8_t *data = NULL, *temp;
     size_t size = 0;
@@ -33,7 +33,7 @@ int readall(FILE *in, instructions *ins)
     size_t n;
 
     /* None of the parameters can be NULL. */
-    if (in == NULL || ins == NULL)
+    if (in == NULL || exec == NULL)
         return READALL_INVALID;
 
     /* A read error already occurred? */
@@ -42,8 +42,8 @@ int readall(FILE *in, instructions *ins)
 
     while (1) {
 
-        if (used + READALL_CHUNK + 1 > size) {
-            size = used + READALL_CHUNK + 1;
+        if (used + READALL_CHUNK > size) {
+            size = used + READALL_CHUNK;
 
             /* Overflow check. Some ANSI C compilers
                may optimize this away, though. */
@@ -72,16 +72,15 @@ int readall(FILE *in, instructions *ins)
         return READALL_ERROR;
     }
 
-    temp = realloc(data, used + 1);
+    temp = realloc(data, used);
     if (temp == NULL) {
         free(data);
         return READALL_NOMEM;
     }
     data = temp;
-    data[used] = '\0';
 
-    ins->size = used;
-    ins->data = data;
+    exec->size = used;
+    exec->data = data;
 
     return READALL_OK;
 }

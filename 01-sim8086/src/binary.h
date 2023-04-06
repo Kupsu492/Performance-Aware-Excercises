@@ -2,10 +2,15 @@
 #ifndef H_BINARY_SIM8086
 #define H_BINARY_SIM8086
 
-#include <stdlib.h>
 #include <stdio.h>
-#include "instruction.h"
+#include <stdint.h>
 
-int readall(FILE *in, instructions *ins);
+typedef struct stream {
+	size_t pos;
+	size_t size;
+	uint8_t* data;
+} stream;
+
+int read_executable(FILE *in, stream *exec);
 
 #endif
