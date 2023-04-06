@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "reg.h"
+#include "binary.h"
 
-int printBinary(FILE* fp);
+int printBinary(stream exec);
 
 void debugPrintInstruction(instruction op);
 

@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
 
     // Debug function
     if (argc > 2) {
-        return printBinary(fp);
+        return printBinary(exec);
     }
     return read_failure;
 

@@ -6,16 +6,17 @@
 #include "reg.h"
 
 // Debug function to print out file in binary numbers
-int printBinary(FILE* fp) {
-    int n;
+int printBinary(stream exec) {
+    // This is 32 bits because of bitshift throwing conversion warning
+    uint32_t n;
+    uint8_t *stream_n = exec.data;
+    size_t e = exec.size;
 
-    while(1) {
-        n = fgetc(fp);
-        if (feof(fp)) {
-            return 0;
-        }
+    for (size_t i = 0; i < e; i++) {
+        n = *stream_n;
+        stream_n++;
 
-        for (int i = 0; i < 8; ++i)
+        for (int j = 0; j < 8; ++j)
         {
             if (n & 128)
                 printf("1");
