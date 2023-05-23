@@ -1,12 +1,11 @@
 
 #include "opcode.h"
+#include "binary.h"
 #include "mov.h"
 #include "reg.h"
 
-instruction check_opcode(int opcode, FILE* fp) {
-    // 8bit opcodes
-
-    // 7bit opcodes
+instruction check_opcode(stream *file_stream) {
+    uint8_t opcode = *(file_stream->data + file_stream->pos);
 
     // 6bit opcodes
     switch(opcode & 0b11111100) {
@@ -15,7 +14,7 @@ instruction check_opcode(int opcode, FILE* fp) {
         case 0b10000000:
             // return ins_disp_data(opcode, fp);
         case 0b10001000:
-            return ins6disp(opcode, fp, "mov\0");
+            return ins6disp(opcode, &file_stream, OP_MOV);
         case 0b00101000:
             // return ins6disp(opcode, fp, "sub\0");
         case 0b00111000:

@@ -11,7 +11,6 @@
 int main(int argc, char const *argv[])
 {
     FILE* fp;
-    int opcode;
     int read_failure;
     stream exec;
 
@@ -40,23 +39,18 @@ int main(int argc, char const *argv[])
     if (argc > 2) {
         return printBinary(exec);
     }
-    return read_failure;
 
     printf("\nbits 16\n\n");
 
-    while(1) {
-        opcode = fgetc(fp);
-        if (feof(fp)) {
-            break;
-        }
-
-        result = check_opcode(opcode, fp);
+    exec.pos = 0;
+    do {
+        result = check_opcode(&exec);
         debugPrintInstruction(result);
         if (result.error) {
             printf("Error with code: %u", result.error);
             break;
         }
-    }
+    } while (exec.pos < exec.size);
 
     return 0;
 }

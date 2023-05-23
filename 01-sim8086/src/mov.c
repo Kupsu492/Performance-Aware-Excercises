@@ -4,26 +4,86 @@
 #include "reg.h"
 
 /*
-	Instruction decoding which has opcode in the first 6 bits
-	and only has additional DISP bytes. */
-instruction ins6disp(int byte, FILE* fp, char* ins) {
-	instruction op;
+	On success return 0, if bytes are missing return 2.
+*/
+int32_t get_instruction_value(stream *file_stream, ins_data *value, enum wide_codes size) {
+	uint16_t val = 0;
+	uint8_t inc = (size == REG_16BIT) ? 2 : 1;
 
-	op.dir = byte & 2;
-	op.wide = (byte & 1) ? REG_8BIT : REG_16BIT;
+	if ((file_stream->pos + inc) >= file_stream->size)
+		return 2; // Missing opcode's additional data bytes
 
-	byte = fgetc(fp);
-	if (feof(fp)) {
-		op.error = 2;
-		return op; // Missing opcode's additional data bytes
+	if (size == REG_16BIT) {
+		val = (uint8_t) *(file_stream->data + file_stream->pos + 2);
+		val <<= 8;
 	}
 
-	op.op1 = ((byte & 0b00111000) >> 3) + (uint8_t) op.wide;
+	val |= *(file_stream->data + file_stream->pos + 1);
+	file_stream->pos += inc;
+
+	return 0;
+}
+
+enum operation_usage get_effective_address_new(uint8_t byte, stream *file_stream, instruction *inst) {
+	enum wide_codes size = REG_8BIT;
+	enum operation_usage type;
+
+	switch(byte & 0b11000000) {
+		case 0b11000000: // Register to register
+			type = TYPE_REG;
+			inst->op2 = (byte & (uint8_t) 0b00000111) + (uint8_t) inst->wide;
+		break;
+
+		case 0b10000000: // 16-bit displacement
+			size = REG_16BIT;
+			__attribute__ ((fallthrough)); // For compiler: switch case fall through is desirable
+		case 0b01000000: // 8-bit displacement
+			type = TYPE_DISP;
+			inst->op2 = (byte & 0b00000111);
+			inst->error = get_instruction_value(file_stream, &inst->disp, size);
+			break;
+
+		case 0b00000000: // no displacement
+		default:
+			if ((byte & 0b00000111) == 6) {
+				// Special case: direct address mode
+				type = TYPE_DIR;
+				inst->error = get_instruction_value(file_stream, &inst->disp, REG_16BIT);
+			} else {
+				type = TYPE_DISP;
+				inst->op2 = (byte & 0b00000111);
+			}
+	}
+
+	return type;
+}
+
+/*
+	Instruction decoding which has opcode in the first 6 bits
+	and only has additional DISP bytes. */
+instruction ins6disp(uint8_t byte, stream *file_stream, enum operation op) {
+	instruction inst;
+
+	inst.dir = byte & 2;
+	inst.wide = (byte & 1) ? REG_8BIT : REG_16BIT;
+
+	file_stream->pos++;
+	if (file_stream->pos >= file_stream->size) {
+		inst.error = 2;
+		return inst; // Missing opcode's additional data bytes
+	}
+
+	byte = *(file_stream->data + file_stream->pos);
+
+	inst.op1 = ((byte & 0b00111000) >> 3) + (uint8_t) inst.wide;
+	// get_effective_address();
+
+	// file_stream->pos += get_instruction_value();
 	// int failure = decode_effective_address(op, byte, fp);
 	// if (failure)
 	// 	op.error = failure;
 
-	return op;
+	return inst;
 };
 
 /*

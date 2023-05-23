@@ -28,17 +28,45 @@ enum register_codes {
 	REG_DI,
 };
 
+enum operation {
+	OP_MOV,
+	OP_SUB,
+	OP_CMP,
+	OP_JMP,
+};
+
+enum operation_usage {
+	REG_REG,
+	REG_DISP,
+	REG_DATA,
+	DISP_REG,
+	DISP_DATA,
+	DIR_REG,
+	DIR_DATA,
+	REG_DIR,
+	TYPE_REG,
+	TYPE_DISP,
+	TYPE_DIR,
+};
+
+typedef union ins_data {
+	uint8_t ubyte;
+	int8_t byte;
+	uint16_t uword;
+	int16_t word;
+} ins_data;
+
 typedef struct instruction
 {
-	uint8_t operation;
+	enum operation op;
 
 	uint8_t op_usage;
 	// Will contain registers or effective address calculation encodings
 	uint8_t op1;
 	uint8_t op2;
 
-	int32_t data; // Immediate value
-	int32_t disp; // EAC constant value
+	ins_data data; // Immediate value
+	ins_data disp; // EAC constant value
 
 	enum wide_codes wide;
 	bool sign;
