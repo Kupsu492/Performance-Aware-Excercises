@@ -1,0 +1,16 @@
+{
+	"folders":
+	[
+		{
+			"path": "/home/kupsu/Documents/prog/computerenhance/03-haversine-input-generator"
+		}
+	],
+	"settings":
+	{
+		"SublimeLinter.linters.gcc.I": [
+			"${folder}/src/",
+			"/usr/local/include",
+		]
+	}
+
+}
