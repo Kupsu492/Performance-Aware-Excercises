@@ -1,11 +1,19 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(int argc, char const *argv[]) {
     char file_name[30];
     int length;
+    int seed;
     FILE *fPtr = NULL;
+
+    if (argc >= 3) {
+        seed = atoi(argv[2]);
+    } else {
+        seed = time(NULL);
+    }
 
     if (argc < 2) {
         printf("Missing line count argument");
@@ -37,7 +45,7 @@ int main(int argc, char const *argv[]) {
         return -1;
     }
 
-
+    printf("Creating json file with %d lines and using seed: %d\n", length, seed);
 
     return 0;
 }
