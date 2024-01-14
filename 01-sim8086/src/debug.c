@@ -32,7 +32,7 @@ int printBinary(stream exec) {
 }
 
 void debugPrintInstruction(instruction op) {
-    printf("operation: %d\n", op.operation);
+    printf("operation: %d\n", op.op);
 
     printf("op1: %d\n", op.op1);
     printf("op2: %d\n", op.op2);
