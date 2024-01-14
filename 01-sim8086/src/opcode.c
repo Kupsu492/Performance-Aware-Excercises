@@ -1,6 +1,5 @@
 
 #include "opcode.h"
-#include "binary.h"
 #include "mov.h"
 #include "reg.h"
 

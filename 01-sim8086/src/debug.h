@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "reg.h"
-#include "binary.h"
+#include "main.h"
 
 int printBinary(stream exec);
 

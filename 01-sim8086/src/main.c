@@ -2,16 +2,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// #include "main.h"
+#include "main.h"
 #include "opcode.h"
 #include "debug.h"
 #include "reg.h"
-#include "binary.h"
+
+void read_assembly(FILE *assembly, stream *exec) {
+    size_t limit = 1024 * sizeof(uint8_t); // Max file size for now
+    uint8_t* data = malloc(limit);
+
+    size_t result = fread(data, sizeof(uint8_t), limit, assembly);
+    exec->data = data;
+    exec->size = result;
+}
 
 int main(int argc, char const *argv[])
 {
     FILE* fp;
-    int read_failure;
     stream exec;
 
     instruction result;
@@ -27,14 +34,21 @@ int main(int argc, char const *argv[])
         return -1;
     }
 
-    read_failure = read_executable(fp, &exec);
-    fclose(fp);
-
-    if (read_failure) {
-        printf("File reading returned failure: %d", read_failure);
+    read_assembly(fp, &exec);
+    if (ferror(fp)) {
+        printf("Something went wrong with file reading, ferror returned: %d", ferror(fp));
+        fclose(fp);
+        return -1;
+    }
+    if (feof(fp) == 0) {
+        printf("File is bigger than 1kb");
+        fclose(fp);
         return -1;
     }
 
+    fclose(fp);
+
+    return printBinary(exec);
     // Debug function
     if (argc > 2) {
         return printBinary(exec);

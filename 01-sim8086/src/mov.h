@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include "reg.h"
-#include "binary.h"
+#include "main.h"
 
 instruction ins6disp(uint8_t byte, stream *file_stream, enum operation op);
 

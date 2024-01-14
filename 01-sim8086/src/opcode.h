@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include "reg.h"
-#include "binary.h"
+#include "main.h"
 
 instruction check_opcode(stream *file_stream);
 
