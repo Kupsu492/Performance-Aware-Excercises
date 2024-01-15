@@ -1,6 +1,6 @@
 
 #include <stdint.h>
-#include "mov.h"
+#include "decode.h"
 #include "reg.h"
 
 instruction check_opcode(stream *file_stream) {
