@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "main.h"
-#include "opcode.h"
+#include "mov.h"
 #include "debug.h"
 #include "reg.h"
 

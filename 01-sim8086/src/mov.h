@@ -5,6 +5,8 @@
 #include "reg.h"
 #include "main.h"
 
+instruction check_opcode(stream *file_stream);
+
 instruction ins6disp(uint8_t byte, stream *file_stream, enum operation op);
 
 int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp, int w);
