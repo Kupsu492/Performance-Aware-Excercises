@@ -5,7 +5,7 @@
 #include "reg.h"
 #include "main.h"
 
-instruction check_opcode(stream *file_stream);
+int32_t check_opcode(stream *file_stream, instruction *instruction);
 
 instruction ins6disp(uint8_t byte, stream *file_stream, enum operation op);
 

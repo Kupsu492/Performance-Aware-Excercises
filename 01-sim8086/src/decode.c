@@ -3,7 +3,7 @@
 #include "decode.h"
 #include "reg.h"
 
-instruction check_opcode(stream *file_stream) {
+int32_t check_opcode(stream *file_stream, instruction *instruction) {
     uint8_t opcode = *(file_stream->data + file_stream->pos);
 
     // 6bit opcodes
@@ -13,7 +13,7 @@ instruction check_opcode(stream *file_stream) {
         case 0b10000000:
             // return ins_disp_data(opcode, fp);
         case 0b10001000:
-            return ins6disp(opcode, &file_stream, OP_MOV);
+            // return ins6disp(opcode, &file_stream, OP_MOV);
         case 0b00101000:
             // return ins6disp(opcode, fp, "sub\0");
         case 0b00111000:
@@ -39,10 +39,7 @@ instruction check_opcode(stream *file_stream) {
         break;
     }
 
-    instruction op;
-    op.error = 1;
-
-    return op; // Unknown opcode
+    return 1;
 }
 
 /*
