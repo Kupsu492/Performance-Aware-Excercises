@@ -52,8 +52,6 @@ int main(int argc, char const *argv[])
         return printBinary(exec);
     }
 
-    printf("\nbits 16\n\n");
-
     // Malloc array of 100 instructions
     instruction* result = malloc(sizeof(instruction) * MAX_DECODINGS);
     size_t i = 0;
@@ -78,6 +76,9 @@ int main(int argc, char const *argv[])
         printf("Instruction decoding exceeded max decoded instructions");
         return -1;
     }
+
+    // printf("\nbits 16\n\n");
+    // For loop here for encoding instructions to assembly language
 
     return 0;
 }

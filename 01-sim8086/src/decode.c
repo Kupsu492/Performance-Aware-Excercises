@@ -13,7 +13,8 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
         case 0b10000000:
             // return ins_disp_data(opcode, fp);
         case 0b10001000:
-            // return ins6disp(opcode, &file_stream, OP_MOV);
+            instruction->op = OP_MOV;
+            return ins6disp(file_stream, instruction);
         case 0b00101000:
             // return ins6disp(opcode, fp, "sub\0");
         case 0b00111000:
@@ -63,66 +64,59 @@ int32_t get_instruction_value(stream *file_stream, ins_data *value, enum wide_co
 	return 0;
 }
 
-enum operation_usage get_effective_address_new(uint8_t byte, stream *file_stream, instruction *inst) {
-	enum wide_codes size = REG_8BIT;
-	enum operation_usage type;
+int32_t get_effective_address(stream *file_stream, instruction *inst) {
+	uint8_t byte = *(file_stream->data + file_stream->pos);
 
 	switch(byte & 0b11000000) {
 		case 0b11000000: // Register to register
-			type = TYPE_REG;
+			inst->oprs = REG_REG;
 			inst->op2 = (byte & (uint8_t) 0b00000111) + (uint8_t) inst->wide;
+			file_stream->pos++;
 		break;
 
-		case 0b10000000: // 16-bit displacement
-			size = REG_16BIT;
-			__attribute__ ((fallthrough)); // For compiler: switch case fall through is desirable
-		case 0b01000000: // 8-bit displacement
-			type = TYPE_DISP;
-			inst->op2 = (byte & 0b00000111);
-			inst->error = get_instruction_value(file_stream, &inst->disp, size);
-			break;
+		// case 0b10000000: // 16-bit displacement
+		// 	size = REG_16BIT;
+		// 	__attribute__ ((fallthrough)); // For compiler: switch case fall through is desirable
+		// case 0b01000000: // 8-bit displacement
+		// 	type = TYPE_DISP;
+		// 	inst->op2 = (byte & 0b00000111);
+		// 	inst->error = get_instruction_value(file_stream, &inst->disp, size);
+		// 	break;
 
-		case 0b00000000: // no displacement
+		// case 0b00000000: // no displacement
 		default:
-			if ((byte & 0b00000111) == 6) {
-				// Special case: direct address mode
-				type = TYPE_DIR;
-				inst->error = get_instruction_value(file_stream, &inst->disp, REG_16BIT);
-			} else {
-				type = TYPE_DISP;
-				inst->op2 = (byte & 0b00000111);
-			}
+			return 32;
+		// 	if ((byte & 0b00000111) == 6) {
+		// 		// Special case: direct address mode
+		// 		type = TYPE_DIR;
+		// 		inst->error = get_instruction_value(file_stream, &inst->disp, REG_16BIT);
+		// 	} else {
+		// 		type = TYPE_DISP;
+		// 		inst->op2 = (byte & 0b00000111);
+		// 	}
 	}
 
-	return type;
+	return 0;
 }
 
 /*
 	Instruction decoding which has opcode in the first 6 bits
 	and only has additional DISP bytes. */
-instruction ins6disp(uint8_t byte, stream *file_stream, enum operation op) {
-	instruction inst;
+int32_t ins6disp(stream *file_stream, instruction *inst) {
+	uint8_t byte = *(file_stream->data + file_stream->pos);
 
-	inst.dir = byte & 2;
-	inst.wide = (byte & 1) ? REG_8BIT : REG_16BIT;
+	inst->dir = byte & 2;
+	inst->wide = (byte & 1) ? REG_8BIT : REG_16BIT;
 
 	file_stream->pos++;
 	if (file_stream->pos >= file_stream->size) {
-		inst.error = 2;
-		return inst; // Missing opcode's additional data bytes
+		return 2; // Missing opcode's additional data bytes
 	}
 
 	byte = *(file_stream->data + file_stream->pos);
+	inst->op1 = ((byte & 0b00111000) >> 3) + (uint8_t) inst->wide;
 
-	inst.op1 = ((byte & 0b00111000) >> 3) + (uint8_t) inst.wide;
-	// get_effective_address();
-
-	// file_stream->pos += get_instruction_value();
-	// int failure = decode_effective_address(op, byte, fp);
-	// if (failure)
-	// 	op.error = failure;
-
-	return inst;
+	return get_effective_address(file_stream, inst);
 };
 
 /*

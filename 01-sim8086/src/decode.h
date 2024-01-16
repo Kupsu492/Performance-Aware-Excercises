@@ -7,9 +7,9 @@
 
 int32_t check_opcode(stream *file_stream, instruction *instruction);
 
-instruction ins6disp(uint8_t byte, stream *file_stream, enum operation op);
+int32_t ins6disp(stream *file_stream, instruction *inst);
 
-int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp, int w);
+int32_t get_effective_address(stream *file_stream, instruction *inst);
 
 int movIM_REG(int byte, FILE* fp);
 

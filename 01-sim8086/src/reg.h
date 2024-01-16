@@ -35,7 +35,7 @@ enum operation {
 	OP_JMP,
 };
 
-enum operation_usage {
+enum operators {
 	REG_REG,
 	REG_DISP,
 	REG_DATA,
@@ -59,8 +59,8 @@ typedef union ins_data {
 typedef struct instruction
 {
 	enum operation op;
+	enum operators oprs;
 
-	uint8_t op_usage;
 	// Will contain registers or effective address calculation encodings
 	uint8_t op1;
 	uint8_t op2;
