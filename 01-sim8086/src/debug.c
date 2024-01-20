@@ -32,15 +32,10 @@ int printBinary(stream exec) {
 }
 
 void debugPrintInstruction(instruction op) {
-    printf("operation: %d\n", op.op);
-
-    printf("op1: %d\n", op.op1);
-    printf("op2: %d\n", op.op2);
-
+    printf("operation: %s\n", operation_mnemonic[op.op]);
+    printf("destination: %s\n", field_decode[op.destination]);
+    printf("source: %s\n", field_decode[op.source]);
     printf("wide: %d\n", op.wide);
     printf("sign: %d\n", op.sign);
     printf("dir: %d\n",  op.dir);
-    printf("size: %d\n", op.size);
-
-    printf("error: %d\n", op.error);
 }

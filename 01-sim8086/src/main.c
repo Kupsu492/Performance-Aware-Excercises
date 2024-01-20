@@ -5,6 +5,7 @@
 #include "main.h"
 #include "decode.h"
 #include "debug.h"
+#include "encode.h"
 #include "reg.h"
 
 void read_assembly(FILE *assembly, stream *exec) {
@@ -21,6 +22,7 @@ int main(int argc, char const *argv[])
 {
     FILE* fp;
     stream exec;
+    char extra_option = '0';
 
     if (argc < 2) {
         printf("Missing bytecode file");
@@ -47,38 +49,48 @@ int main(int argc, char const *argv[])
 
     fclose(fp);
 
-    // Debug function
     if (argc > 2) {
+        extra_option = *argv[2];
+    }
+
+    if (extra_option == 'b') {
         return printBinary(exec);
     }
 
     // Malloc array of 100 instructions
     instruction* result = malloc(sizeof(instruction) * MAX_DECODINGS);
-    size_t i = 0;
+    size_t count = 0;
     int32_t r;
-    for (; i < MAX_DECODINGS; ++i) {
-        r = check_opcode(&exec, &result[i]);
+    for (; count < MAX_DECODINGS; ++count) {
+        r = check_opcode(&exec, &result[count]);
         if (r) {
             printf("Instruction decoding failed: %u", r);
             return -1;
         }
-        debugPrintInstruction(result[i]);
 
         if (exec.pos >= exec.size) {
             if (exec.pos > exec.size) {
                 printf("Instruction decoding overflowed data");
                 return -1;
             }
+            count++;
             break;
         }
     }
-    if (i == MAX_DECODINGS) {
+    if (count == MAX_DECODINGS) {
         printf("Instruction decoding exceeded max decoded instructions");
         return -1;
     }
 
-    // printf("\nbits 16\n\n");
-    // For loop here for encoding instructions to assembly language
+    if (extra_option == 'i') {
+        for (size_t i = 0; i < count; ++i)
+        {
+            debugPrintInstruction(result[i]);
+        }
+        return 0;
+    }
+
+    printAssemblyFile(result, count);
 
     return 0;
 }

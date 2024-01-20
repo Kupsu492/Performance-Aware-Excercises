@@ -70,7 +70,7 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 	switch(byte & 0b11000000) {
 		case 0b11000000: // Register to register
 			inst->oprs = REG_REG;
-			inst->op2 = (byte & (uint8_t) 0b00000111) + (uint8_t) inst->wide;
+			inst->source = (byte & (uint8_t) 0b00000111) + (uint8_t) inst->wide;
 			file_stream->pos++;
 		break;
 
@@ -104,9 +104,10 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 	and only has additional DISP bytes. */
 int32_t ins6disp(stream *file_stream, instruction *inst) {
 	uint8_t byte = *(file_stream->data + file_stream->pos);
+	int32_t r;
 
 	inst->dir = byte & 2;
-	inst->wide = (byte & 1) ? REG_8BIT : REG_16BIT;
+	inst->wide = (byte & 1) ? REG_16BIT : REG_8BIT;
 
 	file_stream->pos++;
 	if (file_stream->pos >= file_stream->size) {
@@ -114,9 +115,17 @@ int32_t ins6disp(stream *file_stream, instruction *inst) {
 	}
 
 	byte = *(file_stream->data + file_stream->pos);
-	inst->op1 = ((byte & 0b00111000) >> 3) + (uint8_t) inst->wide;
+	inst->destination = ((byte & 0b00111000) >> 3) + (uint8_t) inst->wide;
 
-	return get_effective_address(file_stream, inst);
+	r = get_effective_address(file_stream, inst);
+
+	if (inst->dir == 0) {
+		byte = inst->destination;
+		inst->destination = inst->source;
+		inst->source = byte;
+	}
+
+	return r;
 };
 
 /*

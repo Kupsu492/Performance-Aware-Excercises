@@ -21,6 +21,27 @@ const char field_decode[16][3] = {
 	"di\0",
 };
 
+const char operation_mnemonic[4][4] = {
+	"mov\0",
+	"sub\0",
+	"cmp\0",
+	"jmp\0",
+};
+
+const char operators_mnemonic[11][11] = {
+	"REG_REG\0",
+	"REG_DISP\0",
+	"REG_DATA\0",
+	"DISP_REG\0",
+	"DISP_DATA\0",
+	"DIR_REG\0",
+	"DIR_DATA\0",
+	"REG_DIR\0",
+	"TYPE_REG\0",
+	"TYPE_DISP\0",
+	"TYPE_DIR\0",
+};
+
 /*
 	Table for effective address calculation */
 const char ea_calc[8][10] = {

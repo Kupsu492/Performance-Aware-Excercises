@@ -9,6 +9,7 @@ enum wide_codes {
 	REG_16BIT = 8,
 };
 
+extern const char field_decode[16][3];
 enum register_codes {
 	REG_AL,
 	REG_CL,
@@ -28,6 +29,7 @@ enum register_codes {
 	REG_DI,
 };
 
+extern const char operation_mnemonic[4][4];
 enum operation {
 	OP_MOV,
 	OP_SUB,
@@ -35,6 +37,7 @@ enum operation {
 	OP_JMP,
 };
 
+extern const char operators_mnemonic[11][11];
 enum operators {
 	REG_REG,
 	REG_DISP,
@@ -62,8 +65,8 @@ typedef struct instruction
 	enum operators oprs;
 
 	// Will contain registers or effective address calculation encodings
-	uint8_t op1;
-	uint8_t op2;
+	uint8_t destination;
+	uint8_t source;
 
 	ins_data data; // Immediate value
 	ins_data disp; // EAC constant value
@@ -71,15 +74,7 @@ typedef struct instruction
 	enum wide_codes wide;
 	bool sign;
 	bool dir;
-	uint8_t size;
-
-	int32_t error; // If processing failed
 } instruction;
-
-/*	Table for register name decoding
-	First 8 are 8bit registers
-	Second 8 are 16bit registers */
-extern const char field_decode[16][3];
 
 /*
 	Table for effective address calculation */
