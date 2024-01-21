@@ -205,6 +205,7 @@ int get_value(FILE* fp, int get_word, int *failure) {
 
 /**
  * Get byte or word size data
+ * file_stream->pos should point to low bits
 */
 int32_t get_data(stream *file_stream, instruction *inst) {
 	if (inst->wide) {
@@ -213,10 +214,13 @@ int32_t get_data(stream *file_stream, instruction *inst) {
 		}
 
 		int32_t val = 0;
+		// First get high byte and shift it forward
 		val += (uint8_t) *(file_stream->data + file_stream->pos + 1);
-		val += (uint8_t) (*(file_stream->data + file_stream->pos + 2)) << 8;
-		inst->data = val;
+		val <<= 8;
+		// Add lower bits
+		val += (uint8_t) *(file_stream->data + file_stream->pos);
 
+		inst->data = val;
 		file_stream->pos += 2;
 
 	} else {
@@ -224,8 +228,8 @@ int32_t get_data(stream *file_stream, instruction *inst) {
 			return 4; // Missing data bytes
 		}
 
-		file_stream->pos++;
 		inst->data = *(file_stream->data + file_stream->pos);
+		file_stream->pos++;
 	}
 
 	return 0;
