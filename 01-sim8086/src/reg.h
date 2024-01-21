@@ -68,8 +68,8 @@ typedef struct instruction
 	uint8_t destination;
 	uint8_t source;
 
-	ins_data data; // Immediate value
-	ins_data disp; // EAC constant value
+	int32_t data; // Immediate value
+	int32_t disp; // EAC constant value
 
 	enum wide_codes wide;
 	bool sign;

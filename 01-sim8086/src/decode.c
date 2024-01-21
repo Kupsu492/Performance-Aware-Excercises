@@ -13,6 +13,7 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 		case 0b10000000:
 			// return ins_disp_data(opcode, fp);
 		case 0b10001000:
+			printf("Decode: 0b10001000 MOV\n");
 			instruction->op = OP_MOV;
 			return ins6disp(file_stream, instruction);
 		case 0b00101000:
@@ -27,7 +28,10 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 	// 4bit opcodes
 	switch(opcode & 0b11110000) {
 		case 0b10110000:
-			// return movIM_REG(opcode, fp);
+			printf("Decode: 0b10110000 MOV\n");
+			instruction->op = OP_MOV;
+			instruction->oprs = REG_DATA;
+			return movREG_IM(file_stream, instruction);
 		case 0b01110000:
 			// return jump_decode(opcode, fp, 0);
 		break;
@@ -199,6 +203,34 @@ int get_value(FILE* fp, int get_word, int *failure) {
 	return val;
 }
 
+/**
+ * Get byte or word size data
+*/
+int32_t get_data(stream *file_stream, instruction *inst) {
+	if (inst->wide) {
+		if ((file_stream->pos + 2) > file_stream->size) {
+			return 3; // Missing data bytes
+		}
+
+		int32_t val = 0;
+		val += (uint8_t) *(file_stream->data + file_stream->pos + 1);
+		val += (uint8_t) (*(file_stream->data + file_stream->pos + 2)) << 8;
+		inst->data = val;
+
+		file_stream->pos += 2;
+
+	} else {
+		if ((file_stream->pos + 1) > file_stream->size) {
+			return 4; // Missing data bytes
+		}
+
+		file_stream->pos++;
+		inst->data = *(file_stream->data + file_stream->pos);
+	}
+
+	return 0;
+}
+
 int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp, int w) {
 	int val;
 	int r_m_field;
@@ -265,22 +297,14 @@ int decode_immediate_accumulator(int byte, FILE* fp) {
 	return 0;
 }
 
-int movIM_REG(int byte, FILE* fp) {
-	const char* reg;
-	int val = 0;
-	int failure = 0;
+int32_t movREG_IM(stream *file_stream, instruction *inst) {
+	uint8_t byte = *(file_stream->data + file_stream->pos);
+	file_stream->pos++;
 
-	int w = byte & 0b00001000;
+	inst->wide = (byte & 8) ? REG_16BIT : REG_8BIT;
+	inst->destination = (byte & 0b00000111) + (uint8_t) inst->wide;
 
-	reg = field_decode[(byte & 0b00000111) + w];
-
-	val = get_value(fp, w, &failure);
-	if (failure)
-		return failure;
-
-	printf("mov %s, %d\n", reg, val);
-
-	return 0;
+	return get_data(file_stream, inst);
 }
 
 int jump_decode(int byte, FILE* fp, int table) {

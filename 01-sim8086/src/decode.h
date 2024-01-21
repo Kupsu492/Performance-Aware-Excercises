@@ -11,7 +11,7 @@ int32_t ins6disp(stream *file_stream, instruction *inst);
 
 int32_t get_effective_address(stream *file_stream, instruction *inst);
 
-int movIM_REG(int byte, FILE* fp);
+int32_t movREG_IM(stream *file_stream, instruction *inst);
 
 int get_value(FILE* fp, int get_word, int *failure);
 
