@@ -96,7 +96,7 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 			if ((byte & 0b00000111) == 6) {
 				// Special case: direct address mode
 				inst->oprs = REG_DIR;
-				inst->disp = get_data(file_stream, inst, true);
+				inst->disp = get_data(file_stream, &inst->disp, true);
 			} else {
 				inst->oprs = REG_EAC;
 			}
@@ -104,7 +104,7 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 	}
 
 	// This part is processing displacement cases
-	inst->disp = get_data(file_stream, inst, get_word);
+	get_data(file_stream, &inst->disp, get_word);
 	if (inst->disp == 0) {
 		// If data is 0, theres no need to do displacement
 		// Mostly used by BP register
@@ -218,7 +218,7 @@ int get_value(FILE* fp, int get_word, int *failure) {
  * Get byte or word size data
  * file_stream->pos should point to low bits
 */
-int32_t get_data(stream *file_stream, instruction *inst, bool get_word) {
+int32_t get_data(stream *file_stream, int32_t *destination, bool get_word) {
 	if (get_word) {
 		if ((file_stream->pos + 2) > file_stream->size) {
 			return 3; // Missing data bytes
@@ -231,7 +231,7 @@ int32_t get_data(stream *file_stream, instruction *inst, bool get_word) {
 		// Add lower bits
 		val += (uint8_t) *(file_stream->data + file_stream->pos);
 
-		inst->data = val;
+		*destination = val;
 		file_stream->pos += 2;
 
 	} else {
@@ -239,7 +239,7 @@ int32_t get_data(stream *file_stream, instruction *inst, bool get_word) {
 			return 4; // Missing data bytes
 		}
 
-		inst->data = *(file_stream->data + file_stream->pos);
+		*destination = *(file_stream->data + file_stream->pos);
 		file_stream->pos++;
 	}
 
@@ -319,7 +319,7 @@ int32_t movREG_IM(stream *file_stream, instruction *inst) {
 	inst->wide = (byte & 8) ? REG_16BIT : REG_8BIT;
 	inst->destination = (byte & 0b00000111) + (uint8_t) inst->wide;
 
-	return get_data(file_stream, inst, inst->wide);
+	return get_data(file_stream, &inst->data, inst->wide);
 }
 
 int jump_decode(int byte, FILE* fp, int table) {
