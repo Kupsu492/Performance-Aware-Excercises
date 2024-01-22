@@ -134,8 +134,8 @@ int32_t ins6disp(stream *file_stream, instruction *inst) {
 
 	r = get_effective_address(file_stream, inst);
 
-	if (inst->dir == 0) {
-		// Swap around oprs enum
+	if (inst->dir == 0 && r == 0) {
+		swap_direction(inst);
 	}
 
 	return r;
@@ -340,5 +340,28 @@ int jump_decode(int byte, FILE* fp, int table) {
 
 	printf("%s %i\n", ins, val);
 
+	return 0;
+}
+
+int32_t swap_direction(instruction *inst) {
+	switch(inst->oprs) {
+		case REG_REG:
+			inst->oprs = REG_REG_R;
+			break;
+		case REG_DIR:
+			inst->oprs = DIR_REG;
+			break;
+		case REG_EAC:
+			inst->oprs = EAC_REG;
+			break;
+		case REG_EAC8:
+			inst->oprs = EAC8_REG;
+			break;
+		case REG_EAC16:
+			inst->oprs = EAC16_REG;
+			break;
+		default:
+			return 5;
+	}
 	return 0;
 }

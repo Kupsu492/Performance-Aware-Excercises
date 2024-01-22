@@ -6,8 +6,8 @@
 
 void printAssemblyFile(instruction* result, size_t count) {
 	const char* operation;
-	const char* destination;
-	const char* source;
+	const char* reg_mem;
+	const char* reg;
 	int32_t data;
 	char eac[30];
 
@@ -18,33 +18,45 @@ void printAssemblyFile(instruction* result, size_t count) {
 
 		switch(result[i].oprs) {
 			case REG_REG:
-				destination = &field_decode[result[i].reg_mem][0];
-				source = &field_decode[result[i].reg][0];
-				printf("%s %s, %s\n", operation, destination, source);
+				reg_mem = &field_decode[result[i].reg_mem][0];
+				reg = &field_decode[result[i].reg][0];
+				printf("%s %s, %s\n", operation, reg_mem, reg);
 				break;
 			case REG_DATA:
-				destination = &field_decode[result[i].reg_mem][0];
+				reg_mem = &field_decode[result[i].reg_mem][0];
 				data = result[i].data;
-				printf("%s %s, %d\n", operation, destination, data);
+				printf("%s %s, %d\n", operation, reg_mem, data);
 				break;
 			case REG_EAC:
-				destination = &field_decode[result[i].reg_mem][0];
-				source = &eac_mnemonic[result[i].reg][0];
-				printf("%s %s, %s\n", operation, destination, source);
+				reg = &field_decode[result[i].reg][0];
+				reg_mem = &eac_mnemonic[result[i].reg_mem][0];
+				printf("%s %s, %s\n", operation, reg, reg_mem);
 				break;
 			case REG_EAC8:
 			case REG_EAC16:
-				destination = &field_decode[result[i].reg_mem][0];
-				sprintf(eac, eac_disp_mnemonic[result[i].reg], result[i].disp);
-				printf("%s %s, %s\n", operation, destination, eac);
+				reg = &field_decode[result[i].reg][0];
+				sprintf(eac, eac_disp_mnemonic[result[i].reg_mem], result[i].disp);
+				printf("%s %s, %s\n", operation, reg, eac);
 				break;
-			case REG_DIR:
 			case REG_REG_R:
-			case DIR_REG:
+				reg_mem = &field_decode[result[i].reg_mem][0];
+				reg = &field_decode[result[i].reg][0];
+				printf("%s %s, %s\n", operation, reg, reg_mem);
+				break;
 			case DATA_REG:
 			case EAC_REG:
+				reg = &field_decode[result[i].reg][0];
+				reg_mem = &eac_mnemonic[result[i].reg_mem][0];
+				printf("%s %s, %s\n", operation, reg_mem, reg);
+				break;
 			case EAC8_REG:
 			case EAC16_REG:
+				reg = &field_decode[result[i].reg][0];
+				sprintf(eac, eac_disp_mnemonic[result[i].reg_mem], result[i].disp);
+				printf("%s %s, %s\n", operation, reg, eac);
+				break;
+			case REG_DIR:
+			case DIR_REG:
 				printf("Missing operators case");
 				continue;
 		}
