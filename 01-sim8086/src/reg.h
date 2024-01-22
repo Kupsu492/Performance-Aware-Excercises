@@ -53,13 +53,13 @@ enum operators {
 	REG_EAC,
 	REG_EAC8,
 	REG_EAC16,
-	EAC_REG,
-	EAC_DATA,
+	// Reversed
+	REG_REG_R,
 	DIR_REG,
-	DIR_DATA,
-	TYPE_REG,
-	TYPE_EAC,
-	TYPE_DIR,
+	DATA_REG,
+	EAC_REG,
+	EAC8_REG,
+	EAC16_REG,
 };
 
 typedef union ins_data {

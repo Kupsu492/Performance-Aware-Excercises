@@ -39,13 +39,12 @@ void printAssemblyFile(instruction* result, size_t count) {
 				printf("%s %s, %s\n", operation, destination, eac);
 				break;
 			case REG_DIR:
-			case EAC_REG:
-			case EAC_DATA:
+			case REG_REG_R:
 			case DIR_REG:
-			case DIR_DATA:
-			case TYPE_REG:
-			case TYPE_EAC:
-			case TYPE_DIR:
+			case DATA_REG:
+			case EAC_REG:
+			case EAC8_REG:
+			case EAC16_REG:
 				printf("Missing operators case");
 				continue;
 		}
