@@ -75,8 +75,8 @@ typedef struct instruction
 	enum operators oprs;
 
 	// Will contain registers or effective address calculation encodings
-	uint8_t destination;
-	uint8_t source;
+	uint8_t reg_mem;
+	uint8_t reg;
 
 	int32_t data; // Immediate value
 	int32_t disp; // EAC constant value

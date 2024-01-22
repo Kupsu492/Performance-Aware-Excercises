@@ -74,12 +74,12 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 	file_stream->pos++;
 
 	// Get R/M
-	inst->source = (byte & 0b00000111);
+	inst->reg_mem = (byte & 0b00000111);
 
 	switch(byte & 0b11000000) {
 		case 0b11000000: // Register to register
 			inst->oprs = REG_REG;
-			inst->source += (uint8_t) inst->wide;
+			inst->reg_mem += (uint8_t) inst->wide;
 			return 0;
 
 		case 0b10000000: // 16-bit displacement
@@ -130,14 +130,12 @@ int32_t ins6disp(stream *file_stream, instruction *inst) {
 	}
 
 	byte = *(file_stream->data + file_stream->pos);
-	inst->destination = ((byte & 0b00111000) >> 3) + (uint8_t) inst->wide;
+	inst->reg = ((byte & 0b00111000) >> 3) + (uint8_t) inst->wide;
 
 	r = get_effective_address(file_stream, inst);
 
 	if (inst->dir == 0) {
-		byte = inst->destination;
-		inst->destination = inst->source;
-		inst->source = byte;
+		// Swap around oprs enum
 	}
 
 	return r;
@@ -317,7 +315,7 @@ int32_t movREG_IM(stream *file_stream, instruction *inst) {
 	file_stream->pos++;
 
 	inst->wide = (byte & 8) ? REG_16BIT : REG_8BIT;
-	inst->destination = (byte & 0b00000111) + (uint8_t) inst->wide;
+	inst->reg_mem = (byte & 0b00000111) + (uint8_t) inst->wide;
 
 	return get_data(file_stream, &inst->data, inst->wide);
 }

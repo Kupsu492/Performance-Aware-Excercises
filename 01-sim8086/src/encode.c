@@ -18,24 +18,24 @@ void printAssemblyFile(instruction* result, size_t count) {
 
 		switch(result[i].oprs) {
 			case REG_REG:
-				destination = &field_decode[result[i].destination][0];
-				source = &field_decode[result[i].source][0];
+				destination = &field_decode[result[i].reg_mem][0];
+				source = &field_decode[result[i].reg][0];
 				printf("%s %s, %s\n", operation, destination, source);
 				break;
 			case REG_DATA:
-				destination = &field_decode[result[i].destination][0];
+				destination = &field_decode[result[i].reg_mem][0];
 				data = result[i].data;
 				printf("%s %s, %d\n", operation, destination, data);
 				break;
 			case REG_EAC:
-				destination = &field_decode[result[i].destination][0];
-				source = &eac_mnemonic[result[i].source][0];
+				destination = &field_decode[result[i].reg_mem][0];
+				source = &eac_mnemonic[result[i].reg][0];
 				printf("%s %s, %s\n", operation, destination, source);
 				break;
 			case REG_EAC8:
 			case REG_EAC16:
-				destination = &field_decode[result[i].destination][0];
-				sprintf(eac, eac_disp_mnemonic[result[i].source], result[i].disp);
+				destination = &field_decode[result[i].reg_mem][0];
+				sprintf(eac, eac_disp_mnemonic[result[i].reg], result[i].disp);
 				printf("%s %s, %s\n", operation, destination, eac);
 				break;
 			case REG_DIR:
