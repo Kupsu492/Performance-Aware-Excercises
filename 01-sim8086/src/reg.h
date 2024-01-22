@@ -56,7 +56,6 @@ enum operators {
 	// Reversed
 	REG_REG_R,
 	DIR_REG,
-	DATA_REG,
 	EAC_REG,
 	EAC8_REG,
 	EAC16_REG,

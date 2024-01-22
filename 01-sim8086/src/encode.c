@@ -43,7 +43,6 @@ void printAssemblyFile(instruction* result, size_t count) {
 				reg = &field_decode[result[i].reg][0];
 				printf("%s %s, %s\n", operation, reg, reg_mem);
 				break;
-			case DATA_REG:
 			case EAC_REG:
 				reg = &field_decode[result[i].reg][0];
 				reg_mem = &eac_mnemonic[result[i].reg_mem][0];
