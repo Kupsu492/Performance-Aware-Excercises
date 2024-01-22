@@ -44,7 +44,7 @@ const char operators_mnemonic[11][11] = {
 
 /*
 	Table for effective address calculation */
-const char ea_calc[8][10] = {
+const char eac_mnemonic[8][10] = {
 	"[bx + si]\0",
 	"[bx + di]\0",
 	"[bp + si]\0",
@@ -56,7 +56,7 @@ const char ea_calc[8][10] = {
 };
 /*
 	Table with direct number encoding*/
-const char ea_calc_dir[8][15] = {
+const char eac_disp_mnemonic[8][15] = {
 	"[bx + si + %u]\0",
 	"[bx + di + %u]\0",
 	"[bp + si + %u]\0",

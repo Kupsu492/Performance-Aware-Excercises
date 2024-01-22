@@ -13,6 +13,8 @@ int32_t get_effective_address(stream *file_stream, instruction *inst);
 
 int32_t movREG_IM(stream *file_stream, instruction *inst);
 
+int32_t get_data(stream *file_stream, instruction *inst, bool get_word);
+
 int get_value(FILE* fp, int get_word, int *failure);
 
 int ins_disp_data(int byte, FILE* fp);

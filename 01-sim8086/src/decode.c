@@ -69,35 +69,46 @@ int32_t get_instruction_value(stream *file_stream, ins_data *value, enum wide_co
 }
 
 int32_t get_effective_address(stream *file_stream, instruction *inst) {
+	bool get_word;
 	uint8_t byte = *(file_stream->data + file_stream->pos);
+	file_stream->pos++;
+
+	// Get R/M
+	inst->source = (byte & 0b00000111);
 
 	switch(byte & 0b11000000) {
 		case 0b11000000: // Register to register
 			inst->oprs = REG_REG;
-			inst->source = (byte & (uint8_t) 0b00000111) + (uint8_t) inst->wide;
-			file_stream->pos++;
-		break;
+			inst->source += (uint8_t) inst->wide;
+			return 0;
 
-		// case 0b10000000: // 16-bit displacement
-		// 	size = REG_16BIT;
-		// 	__attribute__ ((fallthrough)); // For compiler: switch case fall through is desirable
-		// case 0b01000000: // 8-bit displacement
-		// 	type = TYPE_DISP;
-		// 	inst->op2 = (byte & 0b00000111);
-		// 	inst->error = get_instruction_value(file_stream, &inst->disp, size);
-		// 	break;
+		case 0b10000000: // 16-bit displacement
+			inst->oprs = REG_EAC16;
+			get_word = true;
+			break;
+		case 0b01000000: // 8-bit displacement
+			inst->oprs = REG_EAC8;
+			get_word = false;
+			break;
 
-		// case 0b00000000: // no displacement
+		case 0b00000000: // no displacement
 		default:
-			return 32;
-		// 	if ((byte & 0b00000111) == 6) {
-		// 		// Special case: direct address mode
-		// 		type = TYPE_DIR;
-		// 		inst->error = get_instruction_value(file_stream, &inst->disp, REG_16BIT);
-		// 	} else {
-		// 		type = TYPE_DISP;
-		// 		inst->op2 = (byte & 0b00000111);
-		// 	}
+			if ((byte & 0b00000111) == 6) {
+				// Special case: direct address mode
+				inst->oprs = REG_DIR;
+				inst->disp = get_data(file_stream, inst, true);
+			} else {
+				inst->oprs = REG_EAC;
+			}
+			return 0;
+	}
+
+	// This part is processing displacement cases
+	inst->disp = get_data(file_stream, inst, get_word);
+	if (inst->disp == 0) {
+		// If data is 0, theres no need to do displacement
+		// Mostly used by BP register
+		inst->oprs = REG_EAC;
 	}
 
 	return 0;
@@ -207,8 +218,8 @@ int get_value(FILE* fp, int get_word, int *failure) {
  * Get byte or word size data
  * file_stream->pos should point to low bits
 */
-int32_t get_data(stream *file_stream, instruction *inst) {
-	if (inst->wide) {
+int32_t get_data(stream *file_stream, instruction *inst, bool get_word) {
+	if (get_word) {
 		if ((file_stream->pos + 2) > file_stream->size) {
 			return 3; // Missing data bytes
 		}
@@ -257,10 +268,10 @@ int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp
 				return failure;
 
 			if (val) {
-				sprintf(eac_str, ea_calc_dir[r_m_field], val);
+				sprintf(eac_str, eac_disp_mnemonic[r_m_field], val);
 				*r_m = eac_str;
 			} else {
-				*r_m = ea_calc[r_m_field];
+				*r_m = eac_mnemonic[r_m_field];
 			}
 			break;
 
@@ -275,7 +286,7 @@ int decode_effective_address(const char** r_m, char* eac_str, int byte, FILE* fp
 				sprintf(eac_str, "[%u]", val);
 				*r_m = eac_str;
 			} else {
-				*r_m = ea_calc[(byte & 0b00000111)];
+				*r_m = eac_mnemonic[(byte & 0b00000111)];
 			}
 	}
 
@@ -308,7 +319,7 @@ int32_t movREG_IM(stream *file_stream, instruction *inst) {
 	inst->wide = (byte & 8) ? REG_16BIT : REG_8BIT;
 	inst->destination = (byte & 0b00000111) + (uint8_t) inst->wide;
 
-	return get_data(file_stream, inst);
+	return get_data(file_stream, inst, inst->wide);
 }
 
 int jump_decode(int byte, FILE* fp, int table) {

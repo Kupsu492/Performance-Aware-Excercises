@@ -9,6 +9,7 @@ void printAssemblyFile(instruction* result, size_t count) {
 	const char* destination;
 	const char* source;
 	int32_t data;
+	char eac[30];
 
 	printf("\nbits 16\n\n");
 	for (size_t i = 0; i < count; ++i)
@@ -26,16 +27,26 @@ void printAssemblyFile(instruction* result, size_t count) {
 				data = result[i].data;
 				printf("%s %s, %d\n", operation, destination, data);
 				break;
-			case REG_DISP:
-			case DISP_REG:
-			case DISP_DATA:
+			case REG_EAC:
+				destination = &field_decode[result[i].destination][0];
+				source = &eac_mnemonic[result[i].source][0];
+				printf("%s %s, %s\n", operation, destination, source);
+				break;
+			case REG_EAC8:
+			case REG_EAC16:
+				destination = &field_decode[result[i].destination][0];
+				sprintf(eac, eac_disp_mnemonic[result[i].source], result[i].disp);
+				printf("%s %s, %s\n", operation, destination, eac);
+				break;
+			case REG_DIR:
+			case EAC_REG:
+			case EAC_DATA:
 			case DIR_REG:
 			case DIR_DATA:
-			case REG_DIR:
 			case TYPE_REG:
-			case TYPE_DISP:
+			case TYPE_EAC:
 			case TYPE_DIR:
-				printf("Broken decoded instruction: operator");
+				printf("Missing operators case");
 				continue;
 		}
 	}

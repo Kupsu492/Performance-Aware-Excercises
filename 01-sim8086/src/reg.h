@@ -37,18 +37,28 @@ enum operation {
 	OP_JMP,
 };
 
+/**
+ * REG  -> register
+ * DIR  -> Direct address EAC
+ * DATA -> Constant value
+ * EAC   -> No displacement (only registers)
+ * EAC8  -> 8bit displacement
+ * EAC16 -> 16bit displacement
+ */
 extern const char operators_mnemonic[11][11];
 enum operators {
 	REG_REG,
-	REG_DISP,
+	REG_DIR,
 	REG_DATA,
-	DISP_REG,
-	DISP_DATA,
+	REG_EAC,
+	REG_EAC8,
+	REG_EAC16,
+	EAC_REG,
+	EAC_DATA,
 	DIR_REG,
 	DIR_DATA,
-	REG_DIR,
 	TYPE_REG,
-	TYPE_DISP,
+	TYPE_EAC,
 	TYPE_DIR,
 };
 
@@ -78,10 +88,10 @@ typedef struct instruction
 
 /*
 	Table for effective address calculation */
-extern const char ea_calc[8][10];
+extern const char eac_mnemonic[8][10];
 /*
 	Table with direct number encoding*/
-extern const char ea_calc_dir[8][15];
+extern const char eac_disp_mnemonic[8][15];
 
 /*
 	Table for getting instruction mnemonic
