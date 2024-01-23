@@ -57,14 +57,14 @@ const char eac_mnemonic[8][10] = {
 /*
 	Table with direct number encoding*/
 const char eac_disp_mnemonic[8][15] = {
-	"[bx + si + %u]\0",
-	"[bx + di + %u]\0",
-	"[bp + si + %u]\0",
-	"[bp + di + %u]\0",
-	"[si + %u]\0    ",
-	"[di + %u]\0    ",
-	"[bp + %u]\0    ",
-	"[bx + %u]\0    ",
+	"[bx + si %+d]\0",
+	"[bx + di %+d]\0",
+	"[bp + si %+d]\0",
+	"[bp + di %+d]\0",
+	"[si %+d]\0    ",
+	"[di %+d]\0    ",
+	"[bp %+d]\0    ",
+	"[bx %+d]\0    ",
 };
 
 /*

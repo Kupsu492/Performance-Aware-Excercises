@@ -67,7 +67,6 @@ int32_t get_instruction_value(stream *file_stream, ins_data *value, enum wide_co
 }
 
 int32_t get_effective_address(stream *file_stream, instruction *inst) {
-	bool get_word;
 	uint8_t byte = *(file_stream->data + file_stream->pos);
 	file_stream->pos++;
 
@@ -82,11 +81,15 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 
 		case 0b10000000: // 16-bit displacement
 			inst->oprs = EAC16_REG;
-			get_word = true;
+			get_data(file_stream, &inst->disp, true);
 			break;
 		case 0b01000000: // 8-bit displacement
 			inst->oprs = EAC8_REG;
-			get_word = false;
+			get_data(file_stream, &inst->disp, false);
+			// NOTE: 1 byte displacement is signed
+			if (inst->disp & 0x80) {
+				inst->disp ^= (int32_t) 0xFFFFFF00;
+			}
 			break;
 
 		case 0b00000000: // no displacement
@@ -102,7 +105,6 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 	}
 
 	// This part is processing displacement cases
-	get_data(file_stream, &inst->disp, get_word);
 	if (inst->disp == 0) {
 		// If data is 0, theres no need to do displacement
 		// Mostly used by BP register
