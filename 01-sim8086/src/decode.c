@@ -81,11 +81,11 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 			return 0;
 
 		case 0b10000000: // 16-bit displacement
-			inst->oprs = REG_EAC16;
+			inst->oprs = EAC16_REG;
 			get_word = true;
 			break;
 		case 0b01000000: // 8-bit displacement
-			inst->oprs = REG_EAC8;
+			inst->oprs = EAC8_REG;
 			get_word = false;
 			break;
 
@@ -93,10 +93,10 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 		default:
 			if ((byte & 0b00000111) == 6) {
 				// Special case: direct address mode
-				inst->oprs = REG_DIR;
+				inst->oprs = DIR_REG;
 				inst->disp = get_data(file_stream, &inst->disp, true);
 			} else {
-				inst->oprs = REG_EAC;
+				inst->oprs = EAC_REG;
 			}
 			return 0;
 	}
@@ -106,7 +106,7 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 	if (inst->disp == 0) {
 		// If data is 0, theres no need to do displacement
 		// Mostly used by BP register
-		inst->oprs = REG_EAC;
+		inst->oprs = EAC_REG;
 	}
 
 	return 0;
@@ -132,7 +132,7 @@ int32_t ins6disp(stream *file_stream, instruction *inst) {
 
 	r = get_effective_address(file_stream, inst);
 
-	if (inst->dir == 0 && r == 0) {
+	if (inst->dir && r == 0) {
 		swap_direction(inst);
 	}
 
@@ -346,17 +346,17 @@ int32_t swap_direction(instruction *inst) {
 		case REG_REG:
 			inst->oprs = REG_REG_R;
 			break;
-		case REG_DIR:
-			inst->oprs = DIR_REG;
+		case DIR_REG:
+			inst->oprs = REG_DIR;
 			break;
-		case REG_EAC:
-			inst->oprs = EAC_REG;
+		case EAC_REG:
+			inst->oprs = REG_EAC;
 			break;
-		case REG_EAC8:
-			inst->oprs = EAC8_REG;
+		case EAC8_REG:
+			inst->oprs = REG_EAC8;
 			break;
-		case REG_EAC16:
-			inst->oprs = EAC16_REG;
+		case EAC16_REG:
+			inst->oprs = REG_EAC16;
 			break;
 		default:
 			return 5;
