@@ -13,7 +13,6 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 		case 0b10000000:
 			// return ins_disp_data(opcode, fp);
 		case 0b10001000:
-			printf("Decode: 0b10001000 MOV\n");
 			instruction->op = OP_MOV;
 			return ins6disp(file_stream, instruction);
 		case 0b00101000:
@@ -28,7 +27,6 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 	// 4bit opcodes
 	switch(opcode & 0b11110000) {
 		case 0b10110000:
-			printf("Decode: 0b10110000 MOV\n");
 			instruction->op = OP_MOV;
 			instruction->oprs = REG_DATA;
 			return movREG_IM(file_stream, instruction);
