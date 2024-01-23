@@ -52,7 +52,7 @@ void printAssemblyFile(instruction* result, size_t count) {
 			case EAC16_REG:
 				reg = &field_decode[result[i].reg][0];
 				sprintf(eac, eac_disp_mnemonic[result[i].reg_mem], result[i].disp);
-				printf("%s %s, %s\n", operation, reg, eac);
+				printf("%s %s, %s\n", operation, eac, reg);
 				break;
 			case REG_DIR:
 			case DIR_REG:
