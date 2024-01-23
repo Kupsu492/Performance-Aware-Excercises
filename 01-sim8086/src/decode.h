@@ -7,9 +7,9 @@
 
 int32_t check_opcode(stream *file_stream, instruction *instruction);
 
-int32_t ins6disp(stream *file_stream, instruction *inst);
+int32_t get_EAC_with_reg(stream *file_stream, instruction *inst);
 
-int32_t get_effective_address(stream *file_stream, instruction *inst);
+int32_t decode_EAC_mod(stream *file_stream, instruction *inst);
 
 int32_t movREG_IM(stream *file_stream, instruction *inst);
 

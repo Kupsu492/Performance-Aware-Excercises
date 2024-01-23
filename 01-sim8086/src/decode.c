@@ -5,20 +5,31 @@
 
 int32_t check_opcode(stream *file_stream, instruction *instruction) {
 	uint8_t opcode = *(file_stream->data + file_stream->pos);
+	// int32_t r;
+
+	// 7bit opcodes
+	// switch(opcode & 0b11111110) {
+	// 	case 0b11000110:
+	// 		instruction->op = OP_MOV;
+	// 		r = get_EAC_with_reg(file_stream, instruction);
+	// 		if (r) return r;
+	// }
 
 	// 6bit opcodes
 	switch(opcode & 0b11111100) {
 		case 0b00000000:
-			// return ins6disp(opcode, fp, "add\0");
+			// return get_EAC_with_reg(opcode, fp, "add\0");
 		case 0b10000000:
 			// return ins_disp_data(opcode, fp);
 		case 0b10001000:
 			instruction->op = OP_MOV;
-			return ins6disp(file_stream, instruction);
+			instruction->dir = opcode & 2;
+			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+			return get_EAC_with_reg(file_stream, instruction);
 		case 0b00101000:
-			// return ins6disp(opcode, fp, "sub\0");
+			// return get_EAC_with_reg(opcode, fp, "sub\0");
 		case 0b00111000:
-			// return ins6disp(opcode, fp, "cmp\0");
+			// return get_EAC_with_reg(opcode, fp, "cmp\0");
 		case 0b11100000:
 			// return jump_decode(opcode, fp, 1);
 		break;
@@ -66,7 +77,7 @@ int32_t get_instruction_value(stream *file_stream, ins_data *value, enum wide_co
 	return 0;
 }
 
-int32_t get_effective_address(stream *file_stream, instruction *inst) {
+int32_t decode_EAC_mod(stream *file_stream, instruction *inst) {
 	uint8_t byte = *(file_stream->data + file_stream->pos);
 	file_stream->pos++;
 
@@ -115,14 +126,11 @@ int32_t get_effective_address(stream *file_stream, instruction *inst) {
 }
 
 /*
-	Instruction decoding which has opcode in the first 6 bits
-	and only has additional DISP bytes. */
-int32_t ins6disp(stream *file_stream, instruction *inst) {
-	uint8_t byte = *(file_stream->data + file_stream->pos);
+	Instruction decoding which second byte has EAC mod and r/m
+	with reg.*/
+int32_t get_EAC_with_reg(stream *file_stream, instruction *inst) {
+	uint8_t byte;
 	int32_t r;
-
-	inst->dir = byte & 2;
-	inst->wide = (byte & 1) ? REG_16BIT : REG_8BIT;
 
 	file_stream->pos++;
 	if (file_stream->pos >= file_stream->size) {
@@ -132,7 +140,7 @@ int32_t ins6disp(stream *file_stream, instruction *inst) {
 	byte = *(file_stream->data + file_stream->pos);
 	inst->reg = ((byte & 0b00111000) >> 3) + (uint8_t) inst->wide;
 
-	r = get_effective_address(file_stream, inst);
+	r = decode_EAC_mod(file_stream, inst);
 
 	if (inst->dir && r == 0) {
 		swap_direction(inst);
