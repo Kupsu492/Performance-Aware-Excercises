@@ -47,7 +47,10 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 		case 0b10110000:
 			instruction->op = OP_MOV;
 			instruction->oprs = REG_IMME;
-			return movREG_IM(file_stream, instruction);
+			instruction->wide = (opcode & 8) ? REG_16BIT : REG_8BIT;
+			instruction->reg = (opcode & 0b00000111) + (uint8_t) instruction->wide;
+			file_stream->pos++;
+			return get_data(file_stream, &instruction->data, instruction->wide);
 		case 0b01110000:
 			// return jump_decode(opcode, fp, 0);
 		break;
@@ -323,16 +326,6 @@ int decode_immediate_accumulator(int byte, FILE* fp) {
 	printf("%s %s, %d\n", ins, reg, val);
 
 	return 0;
-}
-
-int32_t movREG_IM(stream *file_stream, instruction *inst) {
-	uint8_t byte = *(file_stream->data + file_stream->pos);
-	file_stream->pos++;
-
-	inst->wide = (byte & 8) ? REG_16BIT : REG_8BIT;
-	inst->reg_mem = (byte & 0b00000111) + (uint8_t) inst->wide;
-
-	return get_data(file_stream, &inst->data, inst->wide);
 }
 
 int jump_decode(int byte, FILE* fp, int table) {

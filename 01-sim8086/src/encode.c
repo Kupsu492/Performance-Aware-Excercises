@@ -24,9 +24,9 @@ void printAssemblyFile(instruction* result, size_t count) {
 				printf("%s %s, %s\n", operation, reg_mem, reg);
 				break;
 			case REG_IMME:
-				reg_mem = &field_decode[result[i].reg_mem][0];
+				reg = &field_decode[result[i].reg][0];
 				data = result[i].data;
-				printf("%s %s, %d\n", operation, reg_mem, data);
+				printf("%s %s, %d\n", operation, reg, data);
 				break;
 			case REG_EAC:
 				reg = &field_decode[result[i].reg][0];
