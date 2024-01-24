@@ -401,4 +401,5 @@ int32_t set_oprs_immediate(instruction *inst) {
 		default:
 			return 6;
 	}
+	return 0;
 }

@@ -17,6 +17,8 @@ int32_t get_data(stream *file_stream, int32_t *destination, bool get_word);
 
 int32_t swap_direction(instruction *inst);
 
+int32_t set_oprs_immediate(instruction *inst);
+
 int get_value(FILE* fp, int get_word, int *failure);
 
 int ins_disp_data(int byte, FILE* fp);

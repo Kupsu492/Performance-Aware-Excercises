@@ -8,6 +8,7 @@ void printAssemblyFile(instruction* result, size_t count) {
 	const char* operation;
 	const char* reg_mem;
 	const char* reg;
+	const char* size;
 	int32_t data;
 	char eac[30];
 
@@ -54,6 +55,20 @@ void printAssemblyFile(instruction* result, size_t count) {
 				sprintf(eac, eac_disp_mnemonic[result[i].reg_mem], result[i].disp);
 				printf("%s %s, %s\n", operation, eac, reg);
 				break;
+			case EAC_IMME:
+				data = result[i].data;
+				size = (result[i].wide) ? "word" : "byte";
+				reg_mem = &eac_mnemonic[result[i].reg_mem][0];
+				printf("%s %s, %s %d\n", operation, reg_mem, size, data);
+				break;
+			case EAC8_IMME:
+			case EAC16_IMME:
+				data = result[i].data;
+				size = (result[i].wide) ? "word" : "byte";
+				sprintf(eac, eac_disp_mnemonic[result[i].reg_mem], result[i].disp);
+				printf("%s %s, %s %d\n", operation, eac, size, data);
+				break;
+			case DIR_IMME:
 			case REG_DIR:
 			case DIR_REG:
 				printf("Missing operators case");
