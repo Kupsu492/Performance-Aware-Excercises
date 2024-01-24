@@ -68,8 +68,12 @@ void printAssemblyFile(instruction* result, size_t count) {
 				sprintf(eac, eac_disp_mnemonic[result[i].reg_mem], result[i].disp);
 				printf("%s %s, %s %d\n", operation, eac, size, data);
 				break;
-			case DIR_IMME:
 			case REG_DIR:
+				data = result[i].data;
+				reg = &field_decode[result[i].reg][0];
+				printf("%s %s, [%d]\n", operation, reg, data);
+				break;
+			case DIR_IMME:
 			case DIR_REG:
 				printf("Missing operators case");
 				continue;
