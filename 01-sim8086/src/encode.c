@@ -22,7 +22,7 @@ void printAssemblyFile(instruction* result, size_t count) {
 				reg = &field_decode[result[i].reg][0];
 				printf("%s %s, %s\n", operation, reg_mem, reg);
 				break;
-			case REG_DATA:
+			case REG_IMME:
 				reg_mem = &field_decode[result[i].reg_mem][0];
 				data = result[i].data;
 				printf("%s %s, %d\n", operation, reg_mem, data);

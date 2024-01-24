@@ -5,15 +5,22 @@
 
 int32_t check_opcode(stream *file_stream, instruction *instruction) {
 	uint8_t opcode = *(file_stream->data + file_stream->pos);
-	// int32_t r;
+	int32_t r;
 
 	// 7bit opcodes
-	// switch(opcode & 0b11111110) {
-	// 	case 0b11000110:
-	// 		instruction->op = OP_MOV;
-	// 		r = get_EAC_with_reg(file_stream, instruction);
-	// 		if (r) return r;
-	// }
+	switch(opcode & 0b11111110) {
+		case 0b11000110:
+			instruction->op = OP_MOV;
+			// instruction->oprs = REG_DATA;
+			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+			r = get_EAC_with_reg(file_stream, instruction);
+			if (r) return r;
+
+			r = get_data(file_stream, &instruction->data, instruction->wide);
+			if (r) return r;
+
+			return set_oprs_immediate(instruction);
+	}
 
 	// 6bit opcodes
 	switch(opcode & 0b11111100) {
@@ -39,7 +46,7 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 	switch(opcode & 0b11110000) {
 		case 0b10110000:
 			instruction->op = OP_MOV;
-			instruction->oprs = REG_DATA;
+			instruction->oprs = REG_IMME;
 			return movREG_IM(file_stream, instruction);
 		case 0b01110000:
 			// return jump_decode(opcode, fp, 0);
@@ -372,4 +379,26 @@ int32_t swap_direction(instruction *inst) {
 			return 5;
 	}
 	return 0;
+}
+
+int32_t set_oprs_immediate(instruction *inst) {
+	switch(inst->oprs) {
+		case REG_REG:
+			inst->oprs = REG_IMME;
+			break;
+		case DIR_REG:
+			inst->oprs = DIR_IMME;
+			break;
+		case EAC_REG:
+			inst->oprs = EAC_IMME;
+			break;
+		case EAC8_REG:
+			inst->oprs = EAC8_IMME;
+			break;
+		case EAC16_REG:
+			inst->oprs = EAC16_IMME;
+			break;
+		default:
+			return 6;
+	}
 }

@@ -49,7 +49,6 @@ extern const char operators_mnemonic[11][11];
 enum operators {
 	REG_REG,
 	REG_DIR,
-	REG_DATA,
 	REG_EAC,
 	REG_EAC8,
 	REG_EAC16,
@@ -59,6 +58,12 @@ enum operators {
 	EAC_REG,
 	EAC8_REG,
 	EAC16_REG,
+	// Immediates
+	REG_IMME,
+	DIR_IMME,
+	EAC_IMME,
+	EAC8_IMME,
+	EAC16_IMME,
 };
 
 typedef union ins_data {
