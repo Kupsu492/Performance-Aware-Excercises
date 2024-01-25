@@ -73,8 +73,12 @@ void printAssemblyFile(instruction* result, size_t count) {
 				reg = &field_decode[result[i].reg][0];
 				printf("%s %s, [%d]\n", operation, reg, disp);
 				break;
-			case DIR_IMME:
 			case DIR_REG:
+				disp = result[i].disp;
+				reg = &field_decode[result[i].reg][0];
+				printf("%s [%d], %s\n", operation, disp, reg);
+				break;
+			case DIR_IMME:
 				printf("Missing operators case");
 				continue;
 		}

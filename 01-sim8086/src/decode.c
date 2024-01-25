@@ -20,6 +20,20 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 			if (r) return r;
 
 			return set_oprs_immediate(instruction);
+		case 0b10100000:
+			instruction->op = OP_MOV;
+			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+			instruction->reg = instruction->wide;
+			instruction->oprs = REG_DIR;
+			file_stream->pos++;
+			return get_data(file_stream, &instruction->disp, instruction->wide);
+		case 0b10100010:
+			instruction->op = OP_MOV;
+			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+			instruction->reg = instruction->wide;
+			instruction->oprs = DIR_REG;
+			file_stream->pos++;
+			return get_data(file_stream, &instruction->disp, instruction->wide);
 	}
 
 	// 6bit opcodes
