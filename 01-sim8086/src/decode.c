@@ -118,7 +118,7 @@ int32_t decode_EAC_mod(stream *file_stream, instruction *inst) {
 			if ((byte & 0b00000111) == 6) {
 				// Special case: direct address mode
 				inst->oprs = DIR_REG;
-				inst->disp = get_data(file_stream, &inst->disp, true);
+				get_data(file_stream, &inst->disp, true);
 			} else {
 				inst->oprs = EAC_REG;
 			}

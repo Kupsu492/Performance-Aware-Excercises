@@ -9,7 +9,7 @@ void printAssemblyFile(instruction* result, size_t count) {
 	const char* reg_mem;
 	const char* reg;
 	const char* size;
-	int32_t data;
+	int32_t data, disp;
 	char eac[30];
 
 	printf("\nbits 16\n\n");
@@ -69,9 +69,9 @@ void printAssemblyFile(instruction* result, size_t count) {
 				printf("%s %s, %s %d\n", operation, eac, size, data);
 				break;
 			case REG_DIR:
-				data = result[i].data;
+				disp = result[i].disp;
 				reg = &field_decode[result[i].reg][0];
-				printf("%s %s, [%d]\n", operation, reg, data);
+				printf("%s %s, [%d]\n", operation, reg, disp);
 				break;
 			case DIR_IMME:
 			case DIR_REG:
