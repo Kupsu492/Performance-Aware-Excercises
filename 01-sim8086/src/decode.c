@@ -44,7 +44,6 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
 			return get_EAC_with_reg(file_stream, instruction);
 		case 0b10000000:
-			instruction->dir = 0;
 			instruction->sign = opcode & 2;
 			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
 			r = get_EAC_with_opcode(file_stream, instruction);
@@ -113,17 +112,17 @@ int32_t get_instruction_value(stream *file_stream, ins_data *value, enum wide_co
 	return 0;
 }
 
-int32_t decode_EAC_mod(stream *file_stream, instruction *inst) {
+int32_t decode_EAC_mod(stream *file_stream, instruction *inst, uint8_t *field) {
 	uint8_t byte = *(file_stream->data + file_stream->pos);
 	file_stream->pos++;
 
 	// Get R/M
-	inst->reg_mem = (byte & 0b00000111);
+	*field = (byte & 0b00000111);
 
 	switch(byte & 0b11000000) {
 		case 0b11000000: // Register to register
 			inst->oprs = REG_REG;
-			inst->reg_mem += (uint8_t) inst->wide;
+			*field += (uint8_t) inst->wide;
 			return 0;
 
 		case 0b10000000: // 16-bit displacement
@@ -176,7 +175,7 @@ int32_t get_EAC_with_reg(stream *file_stream, instruction *inst) {
 	byte = *(file_stream->data + file_stream->pos);
 	inst->reg = ((byte & 0b00111000) >> 3) + (uint8_t) inst->wide;
 
-	r = decode_EAC_mod(file_stream, inst);
+	r = decode_EAC_mod(file_stream, inst, &inst->reg_mem);
 
 	if (inst->dir && r == 0) {
 		swap_direction(inst);
@@ -206,7 +205,7 @@ int32_t get_EAC_with_opcode(stream *file_stream, instruction *inst) {
 	}
 	inst->op = opcode;
 
-	r = decode_EAC_mod(file_stream, inst);
+	r = decode_EAC_mod(file_stream, inst, &inst->reg);
 
 	if (inst->dir && r == 0) {
 		swap_direction(inst);

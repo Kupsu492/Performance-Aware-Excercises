@@ -11,7 +11,7 @@ int32_t get_EAC_with_reg(stream *file_stream, instruction *inst);
 
 int32_t get_EAC_with_opcode(stream *file_stream, instruction *inst);
 
-int32_t decode_EAC_mod(stream *file_stream, instruction *inst);
+int32_t decode_EAC_mod(stream *file_stream, instruction *inst, uint8_t *field);
 
 int32_t get_data(stream *file_stream, int32_t *destination, bool get_word);
 
