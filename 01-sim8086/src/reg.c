@@ -21,11 +21,13 @@ const char field_decode[16][3] = {
 	"di\0",
 };
 
-const char operation_mnemonic[4][4] = {
+const char operation_mnemonic[6][4] = {
+	"add\0",
 	"mov\0",
 	"sub\0",
 	"cmp\0",
 	"jmp\0",
+	"ERR\0",
 };
 
 const char operators_mnemonic[11][11] = {

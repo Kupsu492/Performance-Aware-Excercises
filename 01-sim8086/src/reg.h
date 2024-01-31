@@ -31,10 +31,12 @@ enum register_codes {
 
 extern const char operation_mnemonic[4][4];
 enum operation {
+	OP_ADD,
 	OP_MOV,
 	OP_SUB,
 	OP_CMP,
 	OP_JMP,
+	OP_FALSE,
 };
 
 /**
