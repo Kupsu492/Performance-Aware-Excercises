@@ -39,7 +39,10 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 	// 6bit opcodes
 	switch(opcode & 0b11111100) {
 		case 0b00000000:
-			// return get_EAC_with_reg(opcode, fp, "add\0");
+			instruction->op = OP_ADD;
+			instruction->dir = opcode & 2;
+			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+			return get_EAC_with_reg(file_stream, instruction);
 		case 0b10000000:
 			// return ins_disp_data(opcode, fp);
 		case 0b10001000:
