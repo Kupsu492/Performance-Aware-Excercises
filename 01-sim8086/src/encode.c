@@ -79,8 +79,12 @@ void printAssemblyFile(instruction* result, size_t count) {
 				printf("%s [%d], %s\n", operation, disp, reg);
 				break;
 			case DIR_IMME:
-				printf("Missing operators case");
-				continue;
+				disp = result[i].disp;
+				data = result[i].data;
+				size = (result[i].wide) ? "word" : "byte";
+				printf("%s [%d], %s %d\n", operation, disp, size, data);
+				break;
+				// printf("Missing operators case");
 		}
 	}
 	printf("\n");

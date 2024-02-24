@@ -7,6 +7,29 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 	uint8_t opcode = *(file_stream->data + file_stream->pos);
 	int32_t r;
 
+	// Check ADD, SUB, CMP arithmetic instructions
+	if ((opcode & 0b11000110) == 0b00000100) {
+		// immediate to accumulator
+		instruction->op = decode_octal_opcode((opcode & 0b00111000) >> 3);
+		if (instruction->op == OP_FALSE) {
+			return 7;
+		}
+		instruction->oprs = REG_IMME;
+		instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+		instruction->reg = (opcode & 1) ? REG_AX : REG_AL;
+		file_stream->pos++;
+		return get_data(file_stream, &instruction->data, instruction->wide);
+	} else if ((opcode & 0b11000100) == 0) {
+		// Reg/mem to reg and reverse
+		instruction->op = decode_octal_opcode((opcode & 0b00111000) >> 3);
+		if (instruction->op == OP_FALSE) {
+			return 7;
+		}
+		instruction->dir = opcode & 2;
+		instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+		return get_EAC_with_reg(file_stream, instruction);
+	}
+
 	// 7bit opcodes
 	switch(opcode & 0b11111110) {
 		case 0b11000110:
@@ -38,11 +61,6 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 
 	// 6bit opcodes
 	switch(opcode & 0b11111100) {
-		case 0b00000000:
-			instruction->op = OP_ADD;
-			instruction->dir = opcode & 2;
-			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
-			return get_EAC_with_reg(file_stream, instruction);
 		case 0b10000000:
 			instruction->sign = opcode & 2;
 			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
@@ -58,10 +76,6 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 			instruction->dir = opcode & 2;
 			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
 			return get_EAC_with_reg(file_stream, instruction);
-		case 0b00101000:
-			// return get_EAC_with_reg(opcode, fp, "sub\0");
-		case 0b00111000:
-			// return get_EAC_with_reg(opcode, fp, "cmp\0");
 		case 0b11100000:
 			// return jump_decode(opcode, fp, 1);
 		break;
@@ -78,13 +92,6 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 			return get_data(file_stream, &instruction->data, instruction->wide);
 		case 0b01110000:
 			// return jump_decode(opcode, fp, 0);
-		break;
-	}
-
-	// Immediate to accumulator opcodes
-	switch(opcode & 0b11000110) {
-		case 0b00000100:
-			// return decode_immediate_accumulator(opcode, fp);
 		break;
 	}
 
