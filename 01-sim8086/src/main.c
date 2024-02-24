@@ -23,6 +23,7 @@ int main(int argc, char const *argv[])
     FILE* fp;
     stream exec;
     char extra_option = '0';
+    int success = 0;
 
     if (argc < 2) {
         printf("Missing bytecode file");
@@ -64,8 +65,10 @@ int main(int argc, char const *argv[])
     for (; count < MAX_DECODINGS; ++count) {
         r = check_opcode(&exec, &result[count]);
         if (r) {
-            printf("Instruction decoding failed: %u", r);
-            return -1;
+            printf("Instruction decoding failed: %u\n", r);
+            printf("Decoded: %lu instructions\n", count);
+            success = -1;
+            break;
         }
 
         if (exec.pos >= exec.size) {
@@ -79,7 +82,7 @@ int main(int argc, char const *argv[])
     }
     if (count == MAX_DECODINGS) {
         printf("Instruction decoding exceeded max decoded instructions");
-        return -1;
+        success = -1;
     }
 
     if (extra_option == 'i') {
@@ -87,10 +90,10 @@ int main(int argc, char const *argv[])
         {
             debugPrintInstruction(result[i]);
         }
-        return 0;
+        return success;
     }
 
     printAssemblyFile(result, count);
 
-    return 0;
+    return success;
 }
