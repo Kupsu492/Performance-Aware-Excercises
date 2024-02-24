@@ -36,6 +36,7 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 			instruction->op = OP_MOV;
 			// instruction->oprs = REG_DATA;
 			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+			instruction->dir = 0;
 			r = get_EAC_with_reg(file_stream, instruction);
 			if (r) return r;
 
@@ -64,6 +65,7 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 		case 0b10000000:
 			instruction->sign = opcode & 2;
 			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
+			instruction->dir = 0;
 			r = get_EAC_with_opcode(file_stream, instruction);
 			if (r) return r;
 
