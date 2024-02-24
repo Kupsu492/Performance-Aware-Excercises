@@ -214,7 +214,12 @@ int32_t get_EAC_with_opcode(stream *file_stream, instruction *inst) {
 	}
 	inst->op = opcode;
 
+	// TODO: Both REG/REG and REG/EAC go through here
+	// and encoding will expect EAC value or REG to be
+	// on different fields. Maybe theres a better way
+	// than putting value to both fields.
 	r = decode_EAC_mod(file_stream, inst, &inst->reg);
+	inst->reg = inst->reg_mem;
 
 	if (inst->dir && r == 0) {
 		swap_direction(inst);
