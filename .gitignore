@@ -3,6 +3,10 @@
 **/obj/*
 !.gitignore
 
+# Ignore my test assembly files
+test
+test.asm
+
 # Ignore sublime text files
 *.sublime-workspace
 sim8086_.sublime-project
