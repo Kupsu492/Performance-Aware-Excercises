@@ -79,7 +79,15 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 			instruction->wide = (opcode & 1) ? REG_16BIT : REG_8BIT;
 			return get_EAC_with_reg(file_stream, instruction);
 		case 0b11100000:
-			// return jump_decode(opcode, fp, 1);
+			instruction->op = get_loop(opcode);
+			instruction->oprs = IP_INC;
+			file_stream->pos++;
+			get_data(file_stream, &instruction->data, 0);
+			// Data is signed 8bit
+			if (instruction->data & 0x80) {
+				instruction->data ^= (int32_t) 0xFFFFFF00;
+			}
+			return 0;
 		break;
 	}
 
@@ -93,7 +101,15 @@ int32_t check_opcode(stream *file_stream, instruction *instruction) {
 			file_stream->pos++;
 			return get_data(file_stream, &instruction->data, instruction->wide);
 		case 0b01110000:
-			// return jump_decode(opcode, fp, 0);
+			instruction->op = get_jump(opcode);
+			instruction->oprs = IP_INC;
+			file_stream->pos++;
+			get_data(file_stream, &instruction->data, 0);
+			// Data is signed 8bit
+			if (instruction->data & 0x80) {
+				instruction->data ^= (int32_t) 0xFFFFFF00;
+			}
+			return 0;
 		break;
 	}
 
@@ -464,6 +480,58 @@ int32_t set_oprs_immediate(instruction *inst) {
 			return 6;
 	}
 	return 0;
+}
+
+enum operation get_jump(uint8_t opcode) {
+	switch(opcode & 0b00001111) {
+		case 0:
+			return OP_JO;
+		case 1:
+			return OP_JNO;
+		case 2:
+			return OP_JB;
+		case 3:
+			return OP_JNB;
+		case 4:
+			return OP_JE;
+		case 5:
+			return OP_JNE;
+		case 6:
+			return OP_JBE;
+		case 7:
+			return OP_JNBE;
+		case 8:
+			return OP_JS;
+		case 9:
+			return OP_JNS;
+		case 10:
+			return OP_JP;
+		case 11:
+			return OP_JNP;
+		case 12:
+			return OP_JL;
+		case 13:
+			return OP_JNL;
+		case 14:
+			return OP_JLE;
+		case 15:
+			return OP_JNLE;
+	}
+	return OP_FALSE;
+}
+
+enum operation get_loop(uint8_t opcode) {
+	switch(opcode & 0b00000011) {
+		case 0:
+			return OP_LOOPNZ;
+		case 1:
+			return OP_LOOPZ;
+		case 2:
+			return OP_LOOP;
+		case 3:
+			return OP_JCXZ;
+	}
+	return OP_FALSE;
 }
 
 enum operation decode_octal_opcode(uint8_t code) {

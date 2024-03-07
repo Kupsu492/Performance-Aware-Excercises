@@ -29,4 +29,7 @@ int decode_immediate_accumulator(int byte, FILE* fp);
 
 int jump_decode(int byte, FILE* fp, int jump_table);
 
+enum operation get_jump(uint8_t opcode);
+enum operation get_loop(uint8_t opcode);
+
 #endif

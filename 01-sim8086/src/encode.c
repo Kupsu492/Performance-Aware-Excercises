@@ -84,6 +84,9 @@ void printAssemblyFile(instruction* result, size_t count) {
 				size = (result[i].wide) ? "word" : "byte";
 				printf("%s [%d], %s %d\n", operation, disp, size, data);
 				break;
+			case IP_INC:
+				data = result[i].data;
+				printf("%s $%d\n", operation, data);
 				// printf("Missing operators case");
 		}
 	}

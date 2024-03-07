@@ -29,7 +29,7 @@ enum register_codes {
 	REG_DI,
 };
 
-extern const char operation_mnemonic[4][4];
+extern const char operation_mnemonic[26][9];
 enum operation {
 	OP_ADD,
 	OP_MOV,
@@ -37,6 +37,26 @@ enum operation {
 	OP_CMP,
 	OP_JMP,
 	OP_FALSE,
+	OP_JO,
+	OP_JNO,
+	OP_JB,
+	OP_JNB,
+	OP_JE,
+	OP_JNE,
+	OP_JBE,
+	OP_JNBE,
+	OP_JS,
+	OP_JNS,
+	OP_JP,
+	OP_JNP,
+	OP_JL,
+	OP_JNL,
+	OP_JLE,
+	OP_JNLE,
+	OP_LOOPNZ,
+	OP_LOOPZ,
+	OP_LOOP,
+	OP_JCXZ,
 };
 
 /**
@@ -66,6 +86,8 @@ enum operators {
 	EAC_IMME,
 	EAC8_IMME,
 	EAC16_IMME,
+	// Single operators
+	IP_INC,
 };
 
 typedef union ins_data {
