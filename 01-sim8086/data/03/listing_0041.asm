@@ -91,31 +91,23 @@ cmp ax, 1000
 cmp al, -30
 cmp al, 9
 
-test_label0:
-jnz test_label1
-jnz test_label0
-test_label1:
-jnz test_label0
-jnz test_label1
-
-label:
-je label
-jl label
-jle label
-jb label
-jbe label
-jp label
-jo label
-js label
-jne label
-jnl label
-jg label
-jnb label
-ja label
-jnp label
-jno label
-jns label
-loop label
-loopz label
-loopnz label
-jcxz label
+jl $+10+2
+jle $-1+2
+jb $-2+2
+jbe $-3+2
+jp $-4+2
+jo $-5+2
+js $-6+2
+jne $-7+2
+jnl $-8+2
+jnle $-9+2
+jnb $-10+2
+jnbe $-11+2
+jnp $-12+2
+jno $-13+2
+jns $-14+2
+loop $-15+2
+loopz $-16+2
+loopnz $-17+2
+jcxz $-18+2
+je $-19+2
