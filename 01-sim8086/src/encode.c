@@ -86,7 +86,8 @@ void printAssemblyFile(instruction* result, size_t count) {
 				break;
 			case IP_INC:
 				data = result[i].data;
-				printf("%s $%d\n", operation, data);
+				char sign = data >= 0 ? '+' : '-';
+				printf("%s $%c%d+2\n", operation, sign, abs(data));
 				// printf("Missing operators case");
 		}
 	}
