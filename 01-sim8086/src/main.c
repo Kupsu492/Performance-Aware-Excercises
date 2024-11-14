@@ -86,14 +86,20 @@ int main(int argc, char const *argv[])
     }
 
     if (extra_option == 'i') {
-        for (size_t i = 0; i < count; ++i)
-        {
+        for (size_t i = 0; i < count; ++i) {
             debugPrintInstruction(result[i]);
         }
-        return success;
+    } else if (extra_option == 'e') {
+        for (size_t i = 0; i < count; ++i) {
+            // debugPrintInstruction(result[i]);
+        }
+    } else {
+        printf("\nbits 16\n\n");
+        for (size_t i = 0; i < count; ++i) {
+            outputInstruction(result[i], '\n');
+        }
+        printf("\n");
     }
-
-    printAssemblyFile(result, count);
 
     return success;
 }
