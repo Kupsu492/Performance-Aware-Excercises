@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "encode.h"
 #include "reg.h"
+#include "sim.h"
 
 void read_assembly(FILE *assembly, stream *exec) {
     size_t limit = 1024 * sizeof(uint8_t); // Max file size for now
@@ -24,6 +25,7 @@ int main(int argc, char const *argv[])
     stream exec;
     char extra_option = '0';
     int success = 0;
+    hardware hardware;
 
     if (argc < 2) {
         printf("Missing bytecode file");
@@ -90,9 +92,15 @@ int main(int argc, char const *argv[])
             debugPrintInstruction(result[i]);
         }
     } else if (extra_option == 'e') {
+        init_hardware(&hardware);
+
+        printf("\n");
         for (size_t i = 0; i < count; ++i) {
-            // debugPrintInstruction(result[i]);
+            outputInstruction(result[i], ';');
+            simulate_instruction(result[i], &hardware);
         }
+
+        print_out_hardware_info(&hardware);
     } else {
         printf("\nbits 16\n\n");
         for (size_t i = 0; i < count; ++i) {
