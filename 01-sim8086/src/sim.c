@@ -4,10 +4,16 @@
 
 void simulate_instruction(instruction inst, hardware *hardware) {
 	const char* reg;
+	int32_t value;
 	int32_t last_value; // overwriten register value
 
 	switch(inst.oprs) {
 		case REG_REG:
+			last_value = get_register_value(inst.reg_mem, hardware);
+			value = get_register_value(inst.reg, hardware);
+			set_register(inst.reg_mem, value, hardware);
+			reg = &field_decode[inst.reg_mem][0];
+			printf(" %s:0x%x->0x%x\n", reg, last_value, value);
 			break;
 		case REG_IMME:
 			last_value = get_register_value(inst.reg, hardware);
