@@ -2,6 +2,9 @@
 #include "sim.h"
 #include "reg.h"
 
+const int32_t FLAG_SIGN = 1;
+const int32_t FLAG_ZERO = 2;
+
 void simulate_instruction(instruction inst, hardware *hardware) {
 	switch(inst.oprs) {
 		case REG_REG:
@@ -29,12 +32,11 @@ void simulate_instruction(instruction inst, hardware *hardware) {
 void do_reg_reg_instruction(instruction inst, hardware *hardware) {
 	const char* reg;
 	int32_t value;
-	int32_t last_value; // overwriten register value
+	int32_t last_value = get_register_value(inst.reg_mem, hardware);
 
 	switch (inst.op) {
 		case OP_ADD:
 		case OP_MOV:
-			last_value = get_register_value(inst.reg_mem, hardware);
 			value = get_register_value(inst.reg, hardware);
 			set_register(inst.reg_mem, value, hardware);
 			reg = &field_decode[inst.reg_mem][0];
@@ -48,15 +50,20 @@ void do_reg_reg_instruction(instruction inst, hardware *hardware) {
 }
 
 void do_reg_imme_instruction(instruction inst, hardware *hardware) {
-	const char* reg;
-	int32_t last_value; // overwriten register value
+	const char* reg = &field_decode[inst.reg][0];
+	int32_t value;
+	int32_t last_value = get_register_value(inst.reg, hardware);
 
 	switch (inst.op) {
 		case OP_ADD:
+			value = last_value + inst.data;
+			set_register(inst.reg, value, hardware);
+			printf(" %s:0x%x->0x%x", reg, last_value, value);
+			trigger_flags(value, hardware);
+			printf("\n");
+			break;
 		case OP_MOV:
-			last_value = get_register_value(inst.reg, hardware);
 			set_register(inst.reg, inst.data, hardware);
-			reg = &field_decode[inst.reg][0];
 			printf(" %s:0x%x->0x%x\n", reg, last_value, inst.data);
 			break;
 		case OP_SUB:
@@ -64,6 +71,40 @@ void do_reg_imme_instruction(instruction inst, hardware *hardware) {
 		default:
 			printf("Invalid operation");
 	}
+}
+
+void trigger_flags(int32_t result, hardware *hardware) {
+	int32_t current_flags = hardware->flags;
+	int32_t new_flags = current_flags;
+
+	if (result == 0) {
+		new_flags = new_flags | FLAG_ZERO;
+	}
+	if (result | 0x8000) {
+		new_flags = new_flags | FLAG_SIGN;
+	}
+
+	if (current_flags != new_flags) {
+		hardware->flags = new_flags;
+
+		char sign_string1[3], sign_string2[3];
+		get_flag_signs(current_flags, sign_string1);
+		get_flag_signs(new_flags, sign_string2);
+		printf(" flags:%s->%s", sign_string1, sign_string2);
+	}
+}
+
+void get_flag_signs(int32_t signs, char *flag_string) {
+	size_t i = 0;
+	if (signs | FLAG_ZERO) {
+		flag_string[i] = 'Z';
+		i++;
+	}
+	if (signs | FLAG_SIGN) {
+		flag_string[i] = 'S';
+		i++;
+	}
+	flag_string[i] = '\0';
 }
 
 void print_out_hardware_info(hardware *hardware) {

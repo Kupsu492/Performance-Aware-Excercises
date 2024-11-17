@@ -15,6 +15,8 @@ typedef struct hardware {
 	int32_t reg_bp;
 	int32_t reg_si;
 	int32_t reg_di;
+
+	int32_t flags;
 } hardware;
 
 void simulate_instruction(instruction inst, hardware *hardware);
@@ -23,6 +25,8 @@ void print_out_hardware_info(hardware *hardware);
 int32_t get_register_value(uint8_t reg, hardware *hardware);
 void do_reg_reg_instruction(instruction inst, hardware *hardware);
 void do_reg_imme_instruction(instruction inst, hardware *hardware);
+void trigger_flags(int32_t result, hardware *hardware);
+void get_flag_signs(int32_t signs, char *flag_string);
 void init_hardware(hardware *hardware);
 
 #endif
