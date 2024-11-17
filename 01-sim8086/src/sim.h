@@ -21,6 +21,8 @@ void simulate_instruction(instruction inst, hardware *hardware);
 void set_register(uint8_t reg, int32_t value, hardware *hardware);
 void print_out_hardware_info(hardware *hardware);
 int32_t get_register_value(uint8_t reg, hardware *hardware);
+void do_reg_reg_instruction(instruction inst, hardware *hardware);
+void do_reg_imme_instruction(instruction inst, hardware *hardware);
 void init_hardware(hardware *hardware);
 
 #endif

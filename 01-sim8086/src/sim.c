@@ -3,24 +3,11 @@
 #include "reg.h"
 
 void simulate_instruction(instruction inst, hardware *hardware) {
-	const char* reg;
-	int32_t value;
-	int32_t last_value; // overwriten register value
-
 	switch(inst.oprs) {
 		case REG_REG:
-			last_value = get_register_value(inst.reg_mem, hardware);
-			value = get_register_value(inst.reg, hardware);
-			set_register(inst.reg_mem, value, hardware);
-			reg = &field_decode[inst.reg_mem][0];
-			printf(" %s:0x%x->0x%x\n", reg, last_value, value);
-			break;
+			return do_reg_reg_instruction(inst, hardware);
 		case REG_IMME:
-			last_value = get_register_value(inst.reg, hardware);
-			set_register(inst.reg, inst.data, hardware);
-			reg = &field_decode[inst.reg][0];
-			printf(" %s:0x%x->0x%x\n", reg, last_value, inst.data);
-			break;
+			return do_reg_imme_instruction(inst, hardware);
 		case REG_EAC:
 		case REG_EAC8:
 		case REG_EAC16:
@@ -35,6 +22,47 @@ void simulate_instruction(instruction inst, hardware *hardware) {
 		case DIR_REG:
 		case DIR_IMME:
 		case IP_INC:
+			printf("Invalid/unfinished operators");
+	}
+}
+
+void do_reg_reg_instruction(instruction inst, hardware *hardware) {
+	const char* reg;
+	int32_t value;
+	int32_t last_value; // overwriten register value
+
+	switch (inst.op) {
+		case OP_ADD:
+		case OP_MOV:
+			last_value = get_register_value(inst.reg_mem, hardware);
+			value = get_register_value(inst.reg, hardware);
+			set_register(inst.reg_mem, value, hardware);
+			reg = &field_decode[inst.reg_mem][0];
+			printf(" %s:0x%x->0x%x\n", reg, last_value, value);
+			break;
+		case OP_SUB:
+		case OP_CMP:
+		default:
+			printf("Invalid operation");
+	}
+}
+
+void do_reg_imme_instruction(instruction inst, hardware *hardware) {
+	const char* reg;
+	int32_t last_value; // overwriten register value
+
+	switch (inst.op) {
+		case OP_ADD:
+		case OP_MOV:
+			last_value = get_register_value(inst.reg, hardware);
+			set_register(inst.reg, inst.data, hardware);
+			reg = &field_decode[inst.reg][0];
+			printf(" %s:0x%x->0x%x\n", reg, last_value, inst.data);
+			break;
+		case OP_SUB:
+		case OP_CMP:
+		default:
+			printf("Invalid operation");
 	}
 }
 
