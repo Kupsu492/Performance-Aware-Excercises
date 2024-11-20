@@ -36,6 +36,13 @@ void do_reg_reg_instruction(instruction inst, hardware *hardware) {
 
 	switch (inst.op) {
 		case OP_ADD:
+			value = get_register_value(inst.reg, hardware) + last_value;
+			set_register(inst.reg_mem, value, hardware);
+			reg = &field_decode[inst.reg_mem][0];
+			printf(" %s:0x%x->0x%x", reg, last_value, value);
+			trigger_flags(value, hardware);
+			printf("\n");
+			break;
 		case OP_MOV:
 			value = get_register_value(inst.reg, hardware);
 			set_register(inst.reg_mem, value, hardware);
