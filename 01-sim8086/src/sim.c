@@ -78,10 +78,15 @@ void trigger_flags(int32_t result, hardware *hardware) {
 	int32_t new_flags = current_flags;
 
 	if (result == 0) {
-		new_flags = new_flags | FLAG_ZERO;
+		new_flags = new_flags & FLAG_ZERO;
+	} else {
+		new_flags = new_flags ^ FLAG_ZERO;
 	}
-	if (result | 0x8000) {
-		new_flags = new_flags | FLAG_SIGN;
+
+	if (result | (int32_t) 0x80000000) {
+		new_flags = new_flags & FLAG_SIGN;
+	} else {
+		new_flags = new_flags ^ FLAG_SIGN;
 	}
 
 	if (current_flags != new_flags) {
