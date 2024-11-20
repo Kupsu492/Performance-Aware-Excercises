@@ -74,6 +74,12 @@ void do_reg_imme_instruction(instruction inst, hardware *hardware) {
 			printf(" %s:0x%x->0x%x\n", reg, last_value, inst.data);
 			break;
 		case OP_SUB:
+			value = last_value - inst.data;
+			set_register(inst.reg, value, hardware);
+			printf(" %s:0x%x->0x%x", reg, last_value, value);
+			trigger_flags(value, hardware);
+			printf("\n");
+			break;
 		case OP_CMP:
 		default:
 			printf("Invalid operation");
