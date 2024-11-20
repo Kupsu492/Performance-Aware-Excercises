@@ -50,6 +50,13 @@ void do_reg_reg_instruction(instruction inst, hardware *hardware) {
 			printf(" %s:0x%x->0x%x\n", reg, last_value, value);
 			break;
 		case OP_SUB:
+			value = last_value - get_register_value(inst.reg, hardware);
+			set_register(inst.reg_mem, value, hardware);
+			reg = &field_decode[inst.reg_mem][0];
+			printf(" %s:0x%x->0x%x", reg, last_value, value);
+			trigger_flags(value, hardware);
+			printf("\n");
+			break;
 		case OP_CMP:
 		default:
 			printf("Invalid operation");
