@@ -96,11 +96,11 @@ void trigger_flags(int32_t result, hardware *hardware) {
 
 void get_flag_signs(int32_t signs, char *flag_string) {
 	size_t i = 0;
-	if (signs | FLAG_ZERO) {
+	if (signs & FLAG_ZERO) {
 		flag_string[i] = 'Z';
 		i++;
 	}
-	if (signs | FLAG_SIGN) {
+	if (signs & FLAG_SIGN) {
 		flag_string[i] = 'S';
 		i++;
 	}
@@ -108,16 +108,21 @@ void get_flag_signs(int32_t signs, char *flag_string) {
 }
 
 void print_out_hardware_info(hardware *hardware) {
+	char flags[3];
+	get_flag_signs(hardware->flags, flags);
+
 	printf("\n");
 	printf("Final registers:\n");
-	printf("\tax: 0x%04x (%d)\n", hardware->reg_ax, hardware->reg_ax);
-	printf("\tbx: 0x%04x (%d)\n", hardware->reg_bx, hardware->reg_bx);
-	printf("\tcx: 0x%04x (%d)\n", hardware->reg_cx, hardware->reg_cx);
-	printf("\tdx: 0x%04x (%d)\n", hardware->reg_dx, hardware->reg_dx);
-	printf("\tsp: 0x%04x (%d)\n", hardware->reg_sp, hardware->reg_sp);
-	printf("\tbp: 0x%04x (%d)\n", hardware->reg_bp, hardware->reg_bp);
-	printf("\tsi: 0x%04x (%d)\n", hardware->reg_si, hardware->reg_si);
-	printf("\tdi: 0x%04x (%d)\n", hardware->reg_di, hardware->reg_di);
+	printf("    ax: 0x%04x (%d)\n", hardware->reg_ax, hardware->reg_ax);
+	printf("    bx: 0x%04x (%d)\n", hardware->reg_bx, hardware->reg_bx);
+	printf("    cx: 0x%04x (%d)\n", hardware->reg_cx, hardware->reg_cx);
+	printf("    dx: 0x%04x (%d)\n", hardware->reg_dx, hardware->reg_dx);
+	printf("    sp: 0x%04x (%d)\n", hardware->reg_sp, hardware->reg_sp);
+	printf("    bp: 0x%04x (%d)\n", hardware->reg_bp, hardware->reg_bp);
+	printf("    si: 0x%04x (%d)\n", hardware->reg_si, hardware->reg_si);
+	printf("    di: 0x%04x (%d)\n", hardware->reg_di, hardware->reg_di);
+	printf("    di: 0x%04x (%d)\n", hardware->reg_di, hardware->reg_di);
+	printf("  flags: %s\n", flags);
 	printf("\n");
 }
 
@@ -228,4 +233,5 @@ void init_hardware(hardware *hardware) {
 	hardware->reg_bp = 0;
 	hardware->reg_si = 0;
 	hardware->reg_di = 0;
+	hardware->flags  = 0;
 }
