@@ -113,7 +113,7 @@ void trigger_flags(int32_t result, hardware *hardware) {
 		new_flags = new_flags & (~FLAG_ZERO);
 	}
 
-	if (result & (int32_t) 0x80000000) {
+	if (result & (int32_t) 0x80008000) {
 		new_flags = new_flags | FLAG_SIGN;
 	} else {
 		new_flags = new_flags & (~FLAG_SIGN);
