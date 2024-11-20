@@ -58,6 +58,11 @@ void do_reg_reg_instruction(instruction inst, hardware *hardware) {
 			printf("\n");
 			break;
 		case OP_CMP:
+			value = last_value - get_register_value(inst.reg, hardware);
+			printf(" ");
+			trigger_flags(value, hardware);
+			printf("\n");
+			break;
 		default:
 			printf("Invalid operation");
 	}
@@ -88,6 +93,11 @@ void do_reg_imme_instruction(instruction inst, hardware *hardware) {
 			printf("\n");
 			break;
 		case OP_CMP:
+			value = last_value - inst.data;
+			printf(" ");
+			trigger_flags(value, hardware);
+			printf("\n");
+			break;
 		default:
 			printf("Invalid operation");
 	}
